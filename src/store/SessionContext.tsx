@@ -17,8 +17,8 @@ type Props = {
 const SessionContext = createContext<SessionProviderType>({
   allowBreaks: true,
   timerIntervalInMilliseconds: defaultTimerInterval,
-  setAllowBreaks: () => { },
-  setTimerIntervalInMilliseconds: () => { },
+  setAllowBreaks: () => {},
+  setTimerIntervalInMilliseconds: () => {},
 });
 
 const parseTimerInterval = (timerInterval: number | string): TimerInterval => {

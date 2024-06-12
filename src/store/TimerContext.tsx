@@ -19,10 +19,10 @@ const TimerContext = createContext<TimerProviderType>({
   timeInMilliseconds: 0,
   isActive: false,
   isPaused: false,
-  start: () => { },
-  pause: () => { },
-  resume: () => { },
-  reset: () => { },
+  start: () => {},
+  pause: () => {},
+  resume: () => {},
+  reset: () => {},
 });
 
 export const TimerProvider = ({ children }: Props): JSX.Element => {

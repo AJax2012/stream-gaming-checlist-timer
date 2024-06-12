@@ -22,12 +22,21 @@ const Timer = () => {
 
   return (
     <div className="flex justify-center">
-      <Button className={cn({ hidden: isActive })} onClick={start}>Start</Button>
-      <Button className={cn({ hidden: !isActive || !allowBreaks })} variant={isPaused ? 'secondary' : 'ghost'} onClick={isPaused ? resume : pause}>
+      <Button className={cn({ hidden: isActive })} onClick={start}>
+        Start
+      </Button>
+      <Button
+        className={cn({ hidden: !isActive || !allowBreaks })}
+        variant={isPaused ? 'secondary' : 'ghost'}
+        onClick={isPaused ? resume : pause}
+      >
         {isPaused ? <FaPlay /> : <FaPause />}
       </Button>
       <div
-        className={cn('text-3xl ml-5', { 'text-black': !isPaused, 'text-red-500': isPaused })}
+        className={cn('text-3xl ml-5', {
+          'text-black': !isPaused,
+          'text-red-500': isPaused,
+        })}
       >
         {Duration.fromMillis(timeInMilliseconds).toFormat(format)}
       </div>
