@@ -3,10 +3,12 @@ import { createContext, useContext, useState, useEffect } from 'react';
 type TimerInterval = 10 | 100 | 1000;
 const defaultTimerInterval: TimerInterval = 1000;
 
-type SessionProviderType = {
+type SettingsProviderType = {
   allowBreaks: boolean;
+  eventTitle: string;
   timerIntervalInMilliseconds: TimerInterval;
   setAllowBreaks: (allowBreaks: boolean) => void;
+  setEventTitle: (eventTitle: string) => void;
   setTimerIntervalInMilliseconds: (timerInterval: TimerInterval) => void;
 };
 
@@ -14,10 +16,12 @@ type Props = {
   children: JSX.Element | JSX.Element[];
 };
 
-const SessionContext = createContext<SessionProviderType>({
+const SettingsContext = createContext<SettingsProviderType>({
   allowBreaks: true,
+  eventTitle: '',
   timerIntervalInMilliseconds: defaultTimerInterval,
   setAllowBreaks: () => {},
+  setEventTitle: () => {},
   setTimerIntervalInMilliseconds: () => {},
 });
 
@@ -31,8 +35,9 @@ const parseTimerInterval = (timerInterval: number | string): TimerInterval => {
   return defaultTimerInterval;
 };
 
-export const SessionProvider = ({ children }: Props): JSX.Element => {
+export const SettingsProvider = ({ children }: Props): JSX.Element => {
   const [allowBreaks, setAllowBreaks] = useState(true);
+  const [eventTitle, setEventTitle] = useState('Test Event');
   const [timerIntervalInMilliseconds, setTimerIntervalInMilliseconds] =
     useState<TimerInterval>(defaultTimerInterval);
 
@@ -56,18 +61,20 @@ export const SessionProvider = ({ children }: Props): JSX.Element => {
     );
   }, [allowBreaks, timerIntervalInMilliseconds]);
 
-  const sessionState = {
+  const settingsState = {
     allowBreaks,
+    eventTitle,
     timerIntervalInMilliseconds,
     setAllowBreaks,
+    setEventTitle,
     setTimerIntervalInMilliseconds,
   };
 
   return (
-    <SessionContext.Provider value={sessionState}>
+    <SettingsContext.Provider value={settingsState}>
       {children}
-    </SessionContext.Provider>
+    </SettingsContext.Provider>
   );
 };
 
-export const useSession = () => useContext(SessionContext);
+export const useSettings = () => useContext(SettingsContext);

@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 import cn from 'classnames';
 import { Duration } from 'luxon';
-import { useSession, useTimer } from '@/store';
+import { useSettings, useTimer } from '@/store';
 import { Button } from './ui';
 import { FaPause, FaPlay } from 'react-icons/fa';
 
 const Timer = () => {
   const { timeInMilliseconds, isActive, isPaused, pause, resume, start } =
     useTimer();
-  const { allowBreaks, timerIntervalInMilliseconds } = useSession();
+  const { allowBreaks, timerIntervalInMilliseconds } = useSettings();
 
   const format = useMemo(() => {
     switch (timerIntervalInMilliseconds) {

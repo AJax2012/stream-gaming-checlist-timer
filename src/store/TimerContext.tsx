@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useSession } from './SessionContext';
+import { useSettings } from './SettingsContext';
 
 type TimerProviderType = {
   timeInMilliseconds: number;
@@ -26,7 +26,7 @@ const TimerContext = createContext<TimerProviderType>({
 });
 
 export const TimerProvider = ({ children }: Props): JSX.Element => {
-  const { timerIntervalInMilliseconds, allowBreaks } = useSession();
+  const { timerIntervalInMilliseconds, allowBreaks } = useSettings();
   const [timeInMilliseconds, setInMillisecondsTime] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);

@@ -1,19 +1,19 @@
-import { CounterItem, EventList, Timer } from './components';
-import { EventProvider, SessionProvider, TimerProvider } from './store';
+import { EventTypeContainer, EventList, Header } from './components';
+import { EventProvider, SettingsProvider, TimerProvider } from './store';
 import './App.css';
 
 const App = () => (
-  <SessionProvider>
+  <SettingsProvider>
     <TimerProvider>
       <EventProvider>
-        <div className='block'>
-          <Timer />
-          <CounterItem max={4} label="Test" />
+        <section id="main-content" className="block">
+          <Header />
+          <EventTypeContainer />
           <EventList />
-        </div>
+        </section>
       </EventProvider>
     </TimerProvider>
-  </SessionProvider>
+  </SettingsProvider>
 );
 
 export default App;
