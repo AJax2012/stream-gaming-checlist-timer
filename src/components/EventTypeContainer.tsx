@@ -1,24 +1,67 @@
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { useEvent } from '../store';
-import { Completed, Counter } from './EventTypes';
 import { Card } from './ui';
+import { Counter, Completed } from './EventTypes';
 
 const EventTypesContainer = () => {
-  const { eventTypes } = useEvent();
+  const { eventTypes, reorderEventTypes } = useEvent();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    if (over?.id && active.id !== over?.id) {
+      const oldIndex = eventTypes.findIndex((event) => event.id === active.id);
+      const newIndex = eventTypes.findIndex((event) => event.id === over.id);
+
+      reorderEventTypes(oldIndex, newIndex);
+    }
+  };
 
   return (
     <Card className="my-4 p-12">
-      <table className="w-12 mx-auto border-separate border-spacing-4">
-        {eventTypes.map((event) => (
-          <>
-            {event.type === 'counter' && (
-              <Counter key={event.id} max={event.max} label={event.label} />
-            )}
-            {event.type === 'completed' && (
-              <Completed key={event.id} label={event.label} />
-            )}
-          </>
-        ))}
-      </table>
+      <div className='container mx-auto'>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={eventTypes}
+            strategy={verticalListSortingStrategy}
+          >
+            <table className='mx-auto table-auto w-auto border-separate border-spacing-x-0 border-spacing-y-2'>
+              <tbody>
+                {eventTypes.map((event) => (
+                  event.type === 'counter' ? (
+                    <Counter key={event.id} id={event.id} max={event.max} label={event.label} />
+                  ) :
+                    event.type === 'completed' && (
+                      <Completed key={event.id} id={event.id} label={event.label} />
+                    )
+                ))}
+              </tbody>
+            </table>
+          </SortableContext>
+        </DndContext>
+      </div>
     </Card>
   );
 };

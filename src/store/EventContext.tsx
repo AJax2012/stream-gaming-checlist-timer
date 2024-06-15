@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { v4 as uuid } from 'uuid';
 import { ChecklistEvent, CreateEventType, EventType } from '@/types';
 import { useTimer } from './TimerContext';
+import { arrayMove } from '@dnd-kit/sortable';
 
 type EventProviderType = {
   events: ChecklistEvent[];
@@ -11,6 +12,7 @@ type EventProviderType = {
   removeEventById: (eventId: string) => void;
   addEventType: (eventSetter: CreateEventType) => void;
   removeEventType: (id: string) => void;
+  reorderEventTypes: (oldIndex: number, newIndex: number) => void;
   clearEvents: () => void;
 };
 
@@ -18,24 +20,25 @@ type Props = {
   children: JSX.Element | JSX.Element[];
 };
 
-export const EventContext = createContext<EventProviderType>({} as EventProviderType);
+export const EventContext = createContext<EventProviderType>(
+  {} as EventProviderType
+);
 
 export const EventProvider = ({ children }: Props) => {
   const [events, setEvents] = useState<ChecklistEvent[]>([]);
   const [eventTypes, setEventTypes] = useState<EventType[]>([
     {
       id: uuid(),
-      order: 1,
       type: 'counter',
       label: 'Counter',
       max: 5,
     },
     {
       id: uuid(),
-      order: 2,
       type: 'completed',
       label: 'Completed',
-    },]);
+    },
+  ]);
   const { timeInMilliseconds } = useTimer();
 
   const addEvent = (eventName: string) => {
@@ -71,7 +74,6 @@ export const EventProvider = ({ children }: Props) => {
 
     const newEventType: EventType = {
       id: uuid(),
-      order: eventTypes.length + 1,
       ...eventType,
     };
 
@@ -82,11 +84,14 @@ export const EventProvider = ({ children }: Props) => {
     setEventTypes([...eventTypes.filter((eventType) => eventType.id !== id)]);
   };
 
+  const reorderEventTypes = (oldIndex: number, newIndex: number) => {
+    const sortedEvents = arrayMove(eventTypes, oldIndex, newIndex);
+    setEventTypes([...sortedEvents]);
+  };
+
   useEffect(() => {
     localStorage.setItem('events', JSON.stringify(events));
   }, [events]);
-
-
 
   const eventState = {
     events,
@@ -96,9 +101,9 @@ export const EventProvider = ({ children }: Props) => {
     removeEventById,
     addEventType,
     removeEventType,
+    reorderEventTypes,
     clearEvents,
   };
-
 
   return (
     <EventContext.Provider value={eventState}>{children}</EventContext.Provider>
