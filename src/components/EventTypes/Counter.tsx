@@ -6,6 +6,7 @@ import { MdDragIndicator } from 'react-icons/md';
 import { Button, Input, Label } from '@/components/ui';
 import { useEvent, useTimer } from '@/store';
 import { EventTypeOption } from '@/types';
+import { FaTrashAlt } from 'react-icons/fa';
 
 type Props = {
   id: string;
@@ -24,7 +25,7 @@ const Counter = ({
   isRadioOption = false,
   toggleSelected,
 }: Props) => {
-  const { addEvent, removeEvent, events } = useEvent();
+  const { addEvent, removeEvent, events, removeEventType } = useEvent();
   const { isActive, isPaused } = useTimer();
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
@@ -38,6 +39,7 @@ const Counter = ({
   const canDecrement = useMemo(() => count > 0, [count]);
 
   const increment = () => {
+    console.log('increment');
     if (canIncrement) {
       addEvent(label);
     }
@@ -49,13 +51,23 @@ const Counter = ({
     }
   };
 
+  const handleRemoveEventType = () => {
+    const eventsToDelete = events.filter((event) => event.name === label);
+
+    eventsToDelete.forEach((event) => {
+      removeEvent(event.name);
+    });
+
+    removeEventType(id);
+  }
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
 
   return (
-    <tr ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <tr ref={setNodeRef} style={style}>
       {isRadioOption && toggleSelected && (
         <td className="border-2 rounded-l-lg border-r-0 p-4">
           <input
@@ -101,8 +113,19 @@ const Counter = ({
           </Button>
         </span>
       </td>
+      <td className="border-y-2 p-4">
+        <Button
+          onClick={handleRemoveEventType}
+          variant="outline"
+          disabled={isActive}
+        >
+          <FaTrashAlt className="cursor-pointer" />
+        </Button>
+      </td>
       <td className="border-2 rounded-r-lg border-l-0 p-4">
-        <MdDragIndicator className="text-2xl" />
+        <div {...attributes} {...listeners}>
+          <MdDragIndicator className="text-2xl" />
+        </div>
       </td>
     </tr>
   );

@@ -1,10 +1,10 @@
-import { ChangeEvent, useMemo } from 'react';
+import { useMemo } from 'react';
 import cn from 'classnames';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { FaCheck } from 'react-icons/fa';
+import { FaCheck, FaTrashAlt } from 'react-icons/fa';
 import { MdClose, MdDragIndicator } from 'react-icons/md';
-import { Button, DialogClose, Input, Label } from '@/components/ui';
+import { Button, Label } from '@/components/ui';
 import { useEvent, useTimer } from '@/store';
 import { EventTypeOption } from '@/types';
 
@@ -23,7 +23,7 @@ const Completed = ({
   isRadioOption = false,
   toggleSelected,
 }: Props) => {
-  const { addEvent, removeEvent, events } = useEvent();
+  const { addEvent, removeEvent, events, removeEventType } = useEvent();
   const { isActive, isPaused } = useTimer();
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
@@ -37,8 +37,18 @@ const Completed = ({
   };
 
   const removeCompleted = () => {
+    const eventsToDelete = events.filter((event) => event.name === label);
+
+    eventsToDelete.forEach((event) => {
+      removeEvent(event.name);
+    });
+
     removeEvent(label);
   };
+
+  const handleRemoveEventType = () => {
+    removeEventType(id);
+  }
 
   const toggleCompleted = () => {
     if (isCompleted) {
@@ -54,7 +64,7 @@ const Completed = ({
   };
 
   return (
-    <tr ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <tr ref={setNodeRef} style={style}>
       {isRadioOption && toggleSelected && (
         <td className="border-2 rounded-l-lg border-r-0 p-4">
           <input
@@ -81,13 +91,23 @@ const Completed = ({
           onClick={toggleCompleted}
           variant="outline"
           disabled={!isActive || isPaused}
-          className="column-span-2"
         >
           {isCompleted ? <FaCheck color="green" /> : <MdClose color="red" />}
         </Button>
       </td>
+      <td className="border-y-2 p-4">
+        <Button
+          onClick={handleRemoveEventType}
+          variant="outline"
+          disabled={isActive}
+        >
+          <FaTrashAlt className="cursor-pointer" />
+        </Button>
+      </td>
       <td className="border-2 rounded-r-lg border-l-0 p-4">
-        <MdDragIndicator className="text-2xl" />
+        <div {...attributes} {...listeners}>
+          <MdDragIndicator className="text-2xl" />
+        </div>
       </td>
     </tr>
   );

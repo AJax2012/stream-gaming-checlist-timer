@@ -52,7 +52,7 @@ const AddEventType = () => {
 
   return (
     <tr>
-      <td colSpan={3} className="text-center border-2 rounded-lg border-dashed">
+      <td colSpan={4} className="text-center border-2 rounded-lg border-dashed">
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button variant="ghost" className="w-full" onClick={() => setIsOpen(true)}>
