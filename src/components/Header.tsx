@@ -6,7 +6,7 @@ const Header = () => {
   const { eventTitle } = useSettings();
 
   return (
-    <Card>
+    <Card className="mx-60">
       <CardTitle className="text-3xl my-5">{eventTitle}</CardTitle>
       <CardContent>
         <Timer />

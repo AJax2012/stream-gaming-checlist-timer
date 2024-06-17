@@ -37,7 +37,7 @@ const EventTypesContainer = () => {
   };
 
   return (
-    <Card className="my-4 p-12">
+    <Card className="my-4 p-12 mx-60">
       <div className="container mx-auto">
         <DndContext
           sensors={sensors}

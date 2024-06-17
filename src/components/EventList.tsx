@@ -26,7 +26,7 @@ const EventList = () => {
   }, [timerIntervalInMilliseconds]);
 
   return (
-    <Card>
+    <Card className="mx-60">
       <CardHeader>
         <CardTitle>Events</CardTitle>
       </CardHeader>
