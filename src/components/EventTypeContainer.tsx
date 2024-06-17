@@ -15,6 +15,7 @@ import {
 import { useEvent } from '../store';
 import { Card } from './ui';
 import { Counter, Completed } from './EventTypes';
+import AddEventType from './EventTypes/AddEventType';
 
 const EventTypesContainer = () => {
   const { eventTypes, reorderEventTypes } = useEvent();
@@ -37,7 +38,7 @@ const EventTypesContainer = () => {
 
   return (
     <Card className="my-4 p-12">
-      <div className='container mx-auto'>
+      <div className="container mx-auto">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -47,16 +48,27 @@ const EventTypesContainer = () => {
             items={eventTypes}
             strategy={verticalListSortingStrategy}
           >
-            <table className='mx-auto table-auto w-auto border-separate border-spacing-x-0 border-spacing-y-2'>
+            <table className="mx-auto table-auto w-auto border-separate border-spacing-x-0 border-spacing-y-2">
               <tbody>
-                {eventTypes.map((event) => (
+                {eventTypes.map((event) =>
                   event.type === 'counter' ? (
-                    <Counter key={event.id} id={event.id} max={event.max} label={event.label} />
-                  ) :
+                    <Counter
+                      key={event.id}
+                      id={event.id}
+                      max={event.max}
+                      label={event.label}
+                    />
+                  ) : (
                     event.type === 'completed' && (
-                      <Completed key={event.id} id={event.id} label={event.label} />
+                      <Completed
+                        key={event.id}
+                        id={event.id}
+                        label={event.label}
+                      />
                     )
-                ))}
+                  )
+                )}
+                <AddEventType />
               </tbody>
             </table>
           </SortableContext>

@@ -1,6 +1,8 @@
+import EventTypeOption from './EventTypeOption';
+
 type CreateEventType = {
   label: string;
-  type: 'counter' | 'completed';
+  type: EventTypeOption;
   max?: number;
 };
 
