@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import cn from 'classnames';
 import { Duration } from 'luxon';
+import { FaPause, FaPlay } from 'react-icons/fa';
 import { useSettings, useTimer } from '@/store';
 import { Button } from './ui';
-import { FaPause, FaPlay } from 'react-icons/fa';
 
 const Timer = () => {
   const { timeInMilliseconds, isActive, isPaused, pause, resume, start } =

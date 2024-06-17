@@ -1,5 +1,5 @@
-import { EventTypeContainer, EventList, Header } from './components';
-import { EventProvider, SettingsProvider, TimerProvider } from './store';
+import { EventTypeContainer, EventList, Header } from '@/components';
+import { EventProvider, SettingsProvider, TimerProvider } from '@/store';
 import './App.css';
 
 const App = () => (

@@ -20,7 +20,6 @@ import { EventTypeOption } from '@/types';
 import { useEvent } from '@/store';
 import Completed from './Completed';
 import Counter from './Counter';
-import { DialogClose } from '@radix-ui/react-dialog';
 
 const AddEventType = () => {
   const [isOpen, setIsOpen] = useState(false);;
@@ -107,11 +106,9 @@ const AddEventType = () => {
                 {errors.label && touched.label && <p className="text-red-500 text-sm flex items-center"><GoAlert className='mr-1' />{errors.label}</p>}
               </div>
               <DialogFooter>
-                <DialogClose asChild>
-                  <Button type="reset" onClick={handleReset} variant='destructive'>
-                    Cancel
-                  </Button>
-                </DialogClose>
+                <Button type="reset" onClick={handleReset} variant='destructive'>
+                  Cancel
+                </Button>
                 <Button
                   type="submit"
                   onClick={() => handleSubmit}

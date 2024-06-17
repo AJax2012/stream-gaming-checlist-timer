@@ -1,4 +1,4 @@
-import { ChangeEvent, useMemo } from 'react';
+import { useMemo } from 'react';
 import cn from 'classnames';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';

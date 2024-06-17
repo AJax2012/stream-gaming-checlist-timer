@@ -12,7 +12,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { useEvent } from '../store';
+import { useEvent } from '@/store';
 import { Card } from './ui';
 import { Counter, Completed } from './EventTypes';
 import AddEventType from './EventTypes/AddEventType';

@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { arrayMove } from '@dnd-kit/sortable';
 import { v4 as uuid } from 'uuid';
 import { ChecklistEvent, CreateEventType, EventType } from '@/types';
 import { useTimer } from './TimerContext';
-import { arrayMove } from '@dnd-kit/sortable';
 
 type EventProviderType = {
   events: ChecklistEvent[];

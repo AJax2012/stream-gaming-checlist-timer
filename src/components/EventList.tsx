@@ -1,5 +1,7 @@
-import { useEvent, useSettings } from '@/store';
 import { useMemo } from 'react';
+import { FaTrashAlt } from 'react-icons/fa';
+import { Duration } from 'luxon';
+import { useEvent, useSettings } from '@/store';
 import {
   Card,
   CardContent,
@@ -8,8 +10,6 @@ import {
   ListGroup,
   ListGroupItem,
 } from './ui';
-import { FaTrashAlt } from 'react-icons/fa';
-import { Duration } from 'luxon';
 
 const EventList = () => {
   const { events, removeEventById } = useEvent();
