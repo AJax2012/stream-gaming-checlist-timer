@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import cn from 'classnames';
 import {
   DndContext,
   closestCenter,
@@ -12,13 +14,15 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { useEvent } from '@/store';
-import { Card } from './ui';
-import { Counter, Completed } from './EventTypes';
-import AddEventType from './EventTypes/AddEventType';
+import { useEvent, useTimer } from '@/store';
+import { Button, Card } from './ui';
+import { AddEventType, Counter, Completed } from './EventTypes';
+import { FaEdit } from 'react-icons/fa';
 
 const EventTypesContainer = () => {
+  const [isEditMode, setIsEditMode] = useState(true);
   const { eventTypes, reorderEventTypes } = useEvent();
+  const { isActive, isPaused } = useTimer();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -36,8 +40,14 @@ const EventTypesContainer = () => {
     }
   };
 
+  useEffect(() => {
+    if (isActive && !isPaused) {
+      setIsEditMode(false);
+    }
+  }, [isActive, isPaused]);
+
   return (
-    <Card className="my-4 p-12 mx-60">
+    <Card className="mx-auto max-w-2xl p-12 my-4">
       <div className="container mx-auto">
         <DndContext
           sensors={sensors}
@@ -57,6 +67,7 @@ const EventTypesContainer = () => {
                       id={event.id}
                       max={event.max}
                       label={event.label}
+                      isEditMode={isEditMode}
                     />
                   ) : (
                     event.type === 'completed' && (
@@ -64,13 +75,23 @@ const EventTypesContainer = () => {
                         key={event.id}
                         id={event.id}
                         label={event.label}
+                        isEditMode={isEditMode}
                       />
                     )
                   )
                 )}
-                <AddEventType />
               </tbody>
             </table>
+            {(!isActive || isPaused) && <div className={cn('flex gap-2 mx-auto', { 'max-w-[30rem]': isEditMode, 'max-w-[21.5rem]': !isEditMode })}>
+              <div className="text-center border-2 rounded-lg border-dashed w-1/2">
+                <AddEventType />
+              </div>
+              <div className="text-center border-2 rounded-lg border-dashed w-1/2">
+                <Button variant="ghost" className="w-full" onClick={() => setIsEditMode(!isEditMode)}>
+                  <FaEdit />
+                </Button>
+              </div>
+            </div>}
           </SortableContext>
         </DndContext>
       </div>

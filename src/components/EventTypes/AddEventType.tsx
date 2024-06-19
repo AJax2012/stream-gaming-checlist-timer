@@ -50,78 +50,76 @@ const AddEventType = () => {
   });
 
   return (
-    <tr>
-      <td colSpan={4} className="text-center border-2 rounded-lg border-dashed">
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger asChild>
-            <Button variant="ghost" className="w-full" onClick={() => setIsOpen(true)}>
-              <MdAdd />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className='px-8'>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              handleSubmit();
-            }}>
-              <DialogHeader>
-                <DialogTitle>Add Event Type</DialogTitle>
-                <DialogDescription>
-                  Add a new event type to keep track of your gaming session.
-                </DialogDescription>
-              </DialogHeader>
-              <fieldset name="eventTypeSelected">
-                <legend className="sr-only">Event Type</legend>
-                <table className="mx-auto table-auto w-auto border-separate border-spacing-x-0 border-spacing-y-2">
-                  <tbody>
-                    <Completed
-                      id="add-completed"
-                      label="Completed"
-                      isRadioOption
-                      optionSelected={values.type as EventTypeOption}
-                      toggleSelected={handleChange}
-                    />
-                    <Counter
-                      id="add-counter"
-                      label="Counter"
-                      max={5}
-                      isRadioOption
-                      optionSelected={values.type as EventTypeOption}
-                      toggleSelected={handleChange}
-                    />
-                  </tbody>
-                </table>
-              </fieldset>
-              <div className='mt-2 mb-6'>
-                <Label htmlFor="nameInput">Event Type Name</Label>
-                <Input
-                  type="text"
-                  placeholder="Event Type Name"
-                  name="label"
-                  id="labelInput"
-                  minLength={2}
-                  value={values.label}
-                  onChange={handleChange}
-                  className={cn({ 'border-red-500 focus-visible:ring-0': errors.label && touched.label })}
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button variant="ghost" className="w-full" onClick={() => setIsOpen(true)}>
+          <MdAdd />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className='px-8'>
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}>
+          <DialogHeader>
+            <DialogTitle>Add Event Type</DialogTitle>
+            <DialogDescription>
+              Add a new event type to keep track of your gaming session.
+            </DialogDescription>
+          </DialogHeader>
+          <fieldset name="eventTypeSelected">
+            <legend className="sr-only">Event Type</legend>
+            <table className="mx-auto table-auto w-auto border-separate border-spacing-x-0 border-spacing-y-2">
+              <tbody>
+                <Completed
+                  id="add-completed"
+                  label="Completed"
+                  isRadioOption
+                  optionSelected={values.type as EventTypeOption}
+                  toggleSelected={handleChange}
+                  isEditMode={false}
                 />
-                {errors.label && touched.label && <p className="text-red-500 text-sm flex items-center"><GoAlert className='mr-1' />{errors.label}</p>}
-              </div>
-              <DialogFooter>
-                <Button type="reset" onClick={handleReset} variant='destructive'>
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  onClick={() => handleSubmit}
-                  disabled={!isValid}
-                >
-                  Add
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </td>
-    </tr>
+                <Counter
+                  id="add-counter"
+                  label="Counter"
+                  max={5}
+                  isRadioOption
+                  optionSelected={values.type as EventTypeOption}
+                  toggleSelected={handleChange}
+                  isEditMode={false}
+                />
+              </tbody>
+            </table>
+          </fieldset>
+          <div className='mt-2 mb-6'>
+            <Label htmlFor="nameInput">Event Type Name</Label>
+            <Input
+              type="text"
+              placeholder="Event Type Name"
+              name="label"
+              id="labelInput"
+              minLength={2}
+              value={values.label}
+              onChange={handleChange}
+              className={cn({ 'border-red-500 focus-visible:ring-0': errors.label && touched.label })}
+            />
+            {errors.label && touched.label && <p className="text-red-500 text-sm flex items-center"><GoAlert className='mr-1' />{errors.label}</p>}
+          </div>
+          <DialogFooter>
+            <Button type="reset" onClick={handleReset} variant='destructive'>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              onClick={() => handleSubmit}
+              disabled={!isValid}
+            >
+              Add
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
 

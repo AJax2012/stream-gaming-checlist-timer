@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { TimerInterval } from '@/types';
 
-type TimerInterval = 10 | 100 | 1000;
 const defaultTimerInterval: TimerInterval = 1000;
 
 type SettingsProviderType = {
@@ -36,10 +36,18 @@ const parseTimerInterval = (timerInterval: number | string): TimerInterval => {
 };
 
 export const SettingsProvider = ({ children }: Props): JSX.Element => {
-  const [allowBreaks, setAllowBreaks] = useState(true);
-  const [eventTitle, setEventTitle] = useState('Test Event');
+  const [allowBreaks, setAllowBreaks] = useState(
+    localStorage.getItem('allowBreaks') === 'true'
+  );
+  const [eventTitle, setEventTitle] = useState(
+    localStorage.getItem('eventTitle') ||
+      'Please update event title in the settings page'
+  );
   const [timerIntervalInMilliseconds, setTimerIntervalInMilliseconds] =
-    useState<TimerInterval>(defaultTimerInterval);
+    useState<TimerInterval>(
+      (Number(localStorage.getItem('timerInterval')) as TimerInterval) ||
+        defaultTimerInterval
+    );
 
   useEffect(() => {
     const storedAllowBreaks = localStorage.getItem('allowBreaks');
@@ -54,12 +62,17 @@ export const SettingsProvider = ({ children }: Props): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('allowBreaks', JSON.stringify(allowBreaks));
+    localStorage.setItem('allowBreaks', allowBreaks.toString());
     localStorage.setItem(
       'timerInterval',
-      JSON.stringify(timerIntervalInMilliseconds)
+      timerIntervalInMilliseconds.toString()
     );
   }, [allowBreaks, timerIntervalInMilliseconds]);
+
+  useEffect(() => {
+    document.title = eventTitle;
+    localStorage.setItem('eventTitle', eventTitle);
+  }, [eventTitle]);
 
   const settingsState = {
     allowBreaks,
