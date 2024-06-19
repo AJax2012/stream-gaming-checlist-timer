@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { FaTrashAlt } from 'react-icons/fa';
 import { Duration } from 'luxon';
+import { FaTrashAlt } from 'react-icons/fa';
 import { useEvent, useSettings } from '@/store';
 import {
   Card,
@@ -13,7 +13,7 @@ import {
 
 const EventList = () => {
   const { events, removeEventById } = useEvent();
-  const { timerIntervalInMilliseconds } = useSettings();
+  const { timerIntervalInMilliseconds, cardColor } = useSettings();
 
   const format = useMemo(() => {
     switch (timerIntervalInMilliseconds) {
@@ -26,7 +26,12 @@ const EventList = () => {
   }, [timerIntervalInMilliseconds]);
 
   return (
-    <Card className="mx-auto max-w-2xl my-4">
+    <Card
+      className="mx-auto max-w-2xl my-4"
+      style={{
+        backgroundColor: `rgba(${cardColor.r}, ${cardColor.g}, ${cardColor.b}, ${cardColor.a})`,
+      }}
+    >
       <CardHeader>
         <CardTitle>Events</CardTitle>
       </CardHeader>

@@ -2,8 +2,9 @@ import { useState } from 'react';
 import cn from 'classnames';
 import { useFormik } from 'formik';
 import { MdAdd } from 'react-icons/md';
-import { GoAlert } from "react-icons/go";
-import { object, string, mixed } from 'yup'
+import { GoAlert } from 'react-icons/go';
+import { object, string, mixed, number } from 'yup';
+
 import {
   Button,
   Dialog,
@@ -18,29 +19,45 @@ import {
 } from '@/components/ui';
 import { EventTypeOption } from '@/types';
 import { useEvent } from '@/store';
+
 import Completed from './Completed';
 import Counter from './Counter';
 
 const AddEventType = () => {
-  const [isOpen, setIsOpen] = useState(false);;
+  const [isOpen, setIsOpen] = useState(false);
   const { addEventType, eventTypes } = useEvent();
 
-  const { handleSubmit, values, handleChange, handleReset, isValid, errors, touched } = useFormik({
+  const {
+    handleSubmit,
+    values,
+    handleChange,
+    handleReset,
+    isValid,
+    errors,
+    touched,
+  } = useFormik({
     initialValues: {
       label: '',
-      type: 'completed',
+      eventTypeSelected: 'completed',
+      maxCount: 0,
     },
     validationSchema: object({
       label: string().required('Required'),
-      type: mixed().oneOf(['counter', 'completed']).required('Required'),
+      eventTypeSelected: mixed().oneOf(['counter', 'completed']).required('Required'),
+      maxCount: number().notRequired(),
     }),
-    onSubmit: ({ label, type }, { resetForm, setErrors }) => {
+    onSubmit: ({ label, eventTypeSelected, maxCount }, { resetForm, setErrors }) => {
       if (eventTypes.filter((event) => event.label === label).length > 0) {
         setErrors({ label: 'Event type already exists' });
         return;
       }
 
-      addEventType({ label, type: type as EventTypeOption });
+      addEventType({
+        label,
+        type: eventTypeSelected as EventTypeOption,
+        max: maxCount > 0 ? maxCount : undefined,
+      });
+
       resetForm();
       setIsOpen(false);
     },
@@ -52,15 +69,21 @@ const AddEventType = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="w-full" onClick={() => setIsOpen(true)}>
+        <Button
+          variant="ghost"
+          className="w-full"
+          onClick={() => setIsOpen(true)}
+        >
           <MdAdd />
         </Button>
       </DialogTrigger>
-      <DialogContent className='px-8'>
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}>
+      <DialogContent className="px-8">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+        >
           <DialogHeader>
             <DialogTitle>Add Event Type</DialogTitle>
             <DialogDescription>
@@ -75,8 +98,8 @@ const AddEventType = () => {
                   id="add-completed"
                   label="Completed"
                   isRadioOption
-                  optionSelected={values.type as EventTypeOption}
-                  toggleSelected={handleChange}
+                  optionSelected={values.eventTypeSelected as EventTypeOption}
+                  onChange={handleChange}
                   isEditMode={false}
                 />
                 <Counter
@@ -84,14 +107,14 @@ const AddEventType = () => {
                   label="Counter"
                   max={5}
                   isRadioOption
-                  optionSelected={values.type as EventTypeOption}
-                  toggleSelected={handleChange}
+                  optionSelected={values.eventTypeSelected as EventTypeOption}
+                  onChange={handleChange}
                   isEditMode={false}
                 />
               </tbody>
             </table>
           </fieldset>
-          <div className='mt-2 mb-6'>
+          <div className="mt-2 mb-6">
             <Label htmlFor="nameInput">Event Type Name</Label>
             <Input
               type="text"
@@ -101,12 +124,32 @@ const AddEventType = () => {
               minLength={2}
               value={values.label}
               onChange={handleChange}
-              className={cn({ 'border-red-500 focus-visible:ring-0': errors.label && touched.label })}
+              className={cn({
+                'border-red-500 focus-visible:ring-0':
+                  errors.label && touched.label,
+              })}
             />
-            {errors.label && touched.label && <p className="text-red-500 text-sm flex items-center"><GoAlert className='mr-1' />{errors.label}</p>}
+            {errors.label && touched.label && (
+              <p className="text-red-500 text-sm flex items-center">
+                <GoAlert className="mr-1" />
+                {errors.label}
+              </p>
+            )}
+          </div>
+          <div
+            className={cn('mt-2 mb-6', { hidden: values.eventTypeSelected === 'completed' })}
+          >
+            <Label htmlFor="maxCountInput">Max Count</Label>
+            <Input
+              type="number"
+              placeholder="Max Count"
+              name="maxCount"
+              id="maxCountInput"
+              onChange={handleChange}
+            />
           </div>
           <DialogFooter>
-            <Button type="reset" onClick={handleReset} variant='destructive'>
+            <Button type="reset" onClick={handleReset} variant="destructive">
               Cancel
             </Button>
             <Button

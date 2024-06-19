@@ -8,7 +8,11 @@ import { Button } from './ui';
 const Timer = () => {
   const { timeInMilliseconds, isActive, isPaused, pause, resume, start } =
     useTimer();
-  const { allowBreaks, timerIntervalInMilliseconds } = useSettings();
+  const {
+    allowBreaks,
+    timerIntervalInMilliseconds,
+    timerPauseColor,
+  } = useSettings();
 
   const format = useMemo(() => {
     switch (timerIntervalInMilliseconds) {
@@ -33,10 +37,12 @@ const Timer = () => {
         {isPaused ? <FaPlay /> : <FaPause />}
       </Button>
       <div
-        className={cn('text-3xl ml-5', {
-          'text-black': !isPaused,
-          'text-red-500': isPaused,
-        })}
+        className="text-3xl ml-5"
+        style={{
+          color: isPaused
+            ? `rgb(${timerPauseColor.r}, ${timerPauseColor.g}, ${timerPauseColor.b})`
+            : 'inherit',
+        }}
       >
         {Duration.fromMillis(timeInMilliseconds).toFormat(format)}
       </div>

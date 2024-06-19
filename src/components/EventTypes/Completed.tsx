@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { ChangeEvent, useMemo } from 'react';
 import cn from 'classnames';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -14,7 +14,7 @@ type Props = {
   optionSelected?: EventTypeOption;
   isEditMode: boolean;
   isRadioOption?: boolean;
-  toggleSelected?: (value: EventTypeOption) => void;
+  onChange?: (e: ChangeEvent<any>) => void;
 };
 
 const Completed = ({
@@ -23,29 +23,24 @@ const Completed = ({
   optionSelected,
   isEditMode,
   isRadioOption = false,
-  toggleSelected,
+  onChange,
 }: Props) => {
-  const { addEvent, removeEvent, events, removeEventType } = useEvent();
+  const { addEvent, removeEventById, events, removeEventType } = useEvent();
   const { isActive, isPaused } = useTimer();
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
   const isCompleted = useMemo(() => {
-    return events.filter((event) => event.name === label).length > 0;
+    return events.filter((event) => event.eventTypeId === id).length > 0;
   }, [events, label]);
 
   const addCompleted = () => {
-    addEvent(label);
+    addEvent(label, id);
   };
 
   const removeCompleted = () => {
-    const eventsToDelete = events.filter((event) => event.name === label);
-
-    eventsToDelete.forEach((event) => {
-      removeEvent(event.name);
-    });
-
-    removeEvent(label);
+    const eventToDelete = events.filter((event) => event.eventTypeId === id).pop();
+    removeEventById(eventToDelete?.id as string);
   };
 
   const handleRemoveEventType = () => {
@@ -67,7 +62,7 @@ const Completed = ({
 
   return (
     <tr ref={setNodeRef} style={style}>
-      {isRadioOption && toggleSelected && (
+      {isRadioOption && onChange && (
         <td className="border-2 rounded-l-lg border-r-0 p-4">
           <input
             type="radio"
@@ -76,33 +71,35 @@ const Completed = ({
             name="eventTypeSelected"
             className="h-4 w-4 cursor-pointer"
             checked={optionSelected === 'completed'}
-            onChange={() => toggleSelected('completed')}
+            onChange={onChange}
           />
         </td>
       )}
       <td
-        className={cn('p-4', {
-          'border-2 rounded-l-lg border-r-0 ': !isRadioOption,
-          'border-y-2': isRadioOption,
+        className={cn('py-4 pr-4 text-left', {
+          'border-2 rounded-l-lg border-r-0 pl-6': !isRadioOption,
+          'border-y-2 pl-2': isRadioOption,
         })}
       >
         <Label className="mr-8 font-semibold text-xl">{label}</Label>
       </td>
-      <td className={cn("p-4", { 'border-2 rounded-r-lg border-l-0': !isEditMode, 'border-y-2': isEditMode })}>
+      <td
+        className={cn('py-4 px-1 text-center', {
+          'border-2 rounded-r-lg border-l-0 pl-4': !isEditMode,
+          'border-y-2': isEditMode,
+        })}
+      >
         <Button
           onClick={toggleCompleted}
           variant="outline"
           disabled={!isActive || isPaused}
         >
-          {isCompleted ? <FaCheck color="green" /> : <MdClose color="red" />}
+          {isCompleted ? <MdClose color="red" /> : <FaCheck color="green" />}
         </Button>
       </td>
       {isEditMode && (
         <td className="border-y-2 p-4">
-          <Button
-            onClick={handleRemoveEventType}
-            variant="outline"
-          >
+          <Button onClick={handleRemoveEventType} variant="outline">
             <FaTrashAlt className="cursor-pointer" />
           </Button>
         </td>

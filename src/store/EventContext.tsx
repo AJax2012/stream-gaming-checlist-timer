@@ -7,13 +7,12 @@ import { useTimer } from './TimerContext';
 type EventProviderType = {
   events: ChecklistEvent[];
   eventTypes: EventType[];
-  addEvent: (eventName: string) => void;
-  removeEvent: (eventName: string) => void;
+  addEvent: (eventName: string, eventTypeId: string, timeStampOverride?: number) => void;
   removeEventById: (eventId: string) => void;
   addEventType: (eventSetter: CreateEventType) => void;
   removeEventType: (id: string) => void;
   reorderEventTypes: (oldIndex: number, newIndex: number) => void;
-  clearEvents: () => void;
+  setAllEvents: (eventTypes?: EventType[], events?: ChecklistEvent[]) => void;
 };
 
 type Props = {
@@ -41,30 +40,24 @@ export const EventProvider = ({ children }: Props) => {
   ]);
   const { timeInMilliseconds } = useTimer();
 
-  const addEvent = (eventName: string) => {
+  const addEvent = (eventName: string, eventTypeId: string, timeStampOverride?: number) => {
     const newEvent: ChecklistEvent = {
       id: uuid(),
+      eventTypeId,
       name: eventName,
-      timestampInMilliseconds: timeInMilliseconds,
+      timestampInMilliseconds: timeStampOverride || timeInMilliseconds,
     };
 
     setEvents([...events, newEvent]);
-  };
-
-  const removeEvent = (name: string) => {
-    const newEvent = events.filter((event) => event.name === name).pop();
-
-    if (newEvent) {
-      setEvents([...events.filter((event) => event.id !== newEvent.id)]);
-    }
   };
 
   const removeEventById = (eventId: string) => {
     setEvents([...events.filter((event) => event.id !== eventId)]);
   };
 
-  const clearEvents = () => {
-    setEvents([]);
+  const setAllEvents = (eventTypes?: EventType[], events?: ChecklistEvent[]) => {
+    setEventTypes([...eventTypes || []]);
+    setEvents([...events || []]);
   };
 
   const addEventType = (eventType: CreateEventType) => {
@@ -72,15 +65,20 @@ export const EventProvider = ({ children }: Props) => {
       throw new Error('Max must be greater than 0');
     }
 
+    if (eventTypes.filter((event) => event.label === eventType.label).length > 0) {
+      throw new Error('Event type already exists');
+    }
+
     const newEventType: EventType = {
-      id: uuid(),
       ...eventType,
+      id: uuid(),
     };
 
     setEventTypes([...eventTypes, newEventType]);
   };
 
   const removeEventType = (id: string) => {
+    setEvents([...events.filter((event) => event.eventTypeId !== id)]);
     setEventTypes([...eventTypes.filter((eventType) => eventType.id !== id)]);
   };
 
@@ -97,12 +95,11 @@ export const EventProvider = ({ children }: Props) => {
     events,
     eventTypes,
     addEvent,
-    removeEvent,
     removeEventById,
     addEventType,
     removeEventType,
     reorderEventTypes,
-    clearEvents,
+    setAllEvents,
   };
 
   return (

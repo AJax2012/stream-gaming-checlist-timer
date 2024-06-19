@@ -14,15 +14,16 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { useEvent, useTimer } from '@/store';
+import { FaEdit } from 'react-icons/fa';
+import { useEvent, useSettings, useTimer } from '@/store';
 import { Button, Card } from './ui';
 import { AddEventType, Counter, Completed } from './EventTypes';
-import { FaEdit } from 'react-icons/fa';
 
 const EventTypesContainer = () => {
   const [isEditMode, setIsEditMode] = useState(true);
   const { eventTypes, reorderEventTypes } = useEvent();
   const { isActive, isPaused } = useTimer();
+  const { cardColor } = useSettings();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -47,7 +48,12 @@ const EventTypesContainer = () => {
   }, [isActive, isPaused]);
 
   return (
-    <Card className="mx-auto max-w-2xl p-12 my-4">
+    <Card
+      className="mx-auto max-w-2xl p-12 my-4"
+      style={{
+        backgroundColor: `rgba(${cardColor.r}, ${cardColor.g}, ${cardColor.b}, ${cardColor.a})`,
+      }}
+    >
       <div className="container mx-auto">
         <DndContext
           sensors={sensors}
@@ -82,16 +88,27 @@ const EventTypesContainer = () => {
                 )}
               </tbody>
             </table>
-            {(!isActive || isPaused) && <div className={cn('flex gap-2 mx-auto', { 'max-w-[30rem]': isEditMode, 'max-w-[21.5rem]': !isEditMode })}>
-              <div className="text-center border-2 rounded-lg border-dashed w-1/2">
-                <AddEventType />
+            {(!isActive || isPaused) && (
+              <div
+                className={cn('flex gap-2 mx-auto', {
+                  'max-w-[30rem]': isEditMode,
+                  'max-w-[21.5rem]': !isEditMode,
+                })}
+              >
+                <div className="text-center border-2 rounded-lg border-dashed w-1/2">
+                  <AddEventType />
+                </div>
+                <div className="text-center border-2 rounded-lg border-dashed w-1/2">
+                  <Button
+                    variant="ghost"
+                    className="w-full"
+                    onClick={() => setIsEditMode(!isEditMode)}
+                  >
+                    <FaEdit />
+                  </Button>
+                </div>
               </div>
-              <div className="text-center border-2 rounded-lg border-dashed w-1/2">
-                <Button variant="ghost" className="w-full" onClick={() => setIsEditMode(!isEditMode)}>
-                  <FaEdit />
-                </Button>
-              </div>
-            </div>}
+            )}
           </SortableContext>
         </DndContext>
       </div>

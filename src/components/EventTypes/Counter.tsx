@@ -1,12 +1,12 @@
-import { useMemo } from 'react';
+import { ChangeEvent, useMemo } from 'react';
 import cn from 'classnames';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { FaTrashAlt } from 'react-icons/fa';
 import { MdDragIndicator } from 'react-icons/md';
 import { Button, Input, Label } from '@/components/ui';
 import { useEvent, useTimer } from '@/store';
 import { EventTypeOption } from '@/types';
-import { FaTrashAlt } from 'react-icons/fa';
 
 type Props = {
   id: string;
@@ -15,7 +15,7 @@ type Props = {
   optionSelected?: EventTypeOption;
   isEditMode: boolean;
   isRadioOption?: boolean;
-  toggleSelected?: (value: EventTypeOption) => void;
+  onChange?: (e: ChangeEvent<any>) => void;
 };
 
 const Counter = ({
@@ -25,15 +25,15 @@ const Counter = ({
   optionSelected,
   isEditMode,
   isRadioOption = false,
-  toggleSelected,
+  onChange,
 }: Props) => {
-  const { addEvent, removeEvent, events, removeEventType } = useEvent();
+  const { addEvent, removeEventById, events, removeEventType } = useEvent();
   const { isActive, isPaused } = useTimer();
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
   const count = useMemo(() => {
-    return events.filter((event) => event.name === label).length;
+    return events.filter((event) => event.eventTypeId === id).length;
   }, [events, label]);
 
   const canIncrement = useMemo(() => !max || count < max, [count, max]);
@@ -41,25 +41,19 @@ const Counter = ({
   const canDecrement = useMemo(() => count > 0, [count]);
 
   const increment = () => {
-    console.log('increment');
     if (canIncrement) {
-      addEvent(label);
+      addEvent(label, id);
     }
   };
 
   const decrement = () => {
     if (count > 0) {
-      removeEvent(label);
+      const eventToDelete = events.filter((event) => event.eventTypeId === id).pop();
+      removeEventById(eventToDelete?.id as string);
     }
   };
 
   const handleRemoveEventType = () => {
-    const eventsToDelete = events.filter((event) => event.name === label);
-
-    eventsToDelete.forEach((event) => {
-      removeEvent(event.name);
-    });
-
     removeEventType(id);
   };
 
@@ -70,7 +64,7 @@ const Counter = ({
 
   return (
     <tr ref={setNodeRef} style={style}>
-      {isRadioOption && toggleSelected && (
+      {isRadioOption && onChange && (
         <td className="border-2 rounded-l-lg border-r-0 p-4">
           <input
             type="radio"
@@ -79,19 +73,25 @@ const Counter = ({
             name="eventTypeSelected"
             className="h-4 w-4 cursor-pointer"
             checked={optionSelected === 'counter'}
-            onChange={() => toggleSelected('completed')}
+            onChange={onChange}
           />
         </td>
       )}
       <td
-        className={cn('p-4', {
-          'border-2 rounded-l-lg border-r-0 ': !isRadioOption,
-          'border-y-2': isRadioOption,
+        className={cn('py-4 text-left', {
+          'border-2 rounded-l-lg border-r-0 pl-6': !isRadioOption,
+          'border-y-2 pl-2': isRadioOption,
         })}
       >
         <Label className="mr-8 font-semibold text-xl">{label}</Label>
+        {max && <p className='text-sm text-muted-foreground'>Needed: {max}</p>}
       </td>
-      <td className={cn("p-4", { 'border-2 rounded-r-lg border-l-0': !isEditMode, 'border-y-2': isEditMode })}>
+      <td
+        className={cn('py-4 px-1 text-center', {
+          'border-2 rounded-r-lg border-l-0 pr-5': !isEditMode,
+          'border-y-2': isEditMode,
+        })}
+      >
         <span className="flex justify-center flex-nowrap">
           <Button
             onClick={decrement}
@@ -117,10 +117,7 @@ const Counter = ({
       </td>
       {isEditMode && (
         <td className="border-y-2 p-4">
-          <Button
-            onClick={handleRemoveEventType}
-            variant="outline"
-          >
+          <Button onClick={handleRemoveEventType} variant="outline">
             <FaTrashAlt className="cursor-pointer" />
           </Button>
         </td>
