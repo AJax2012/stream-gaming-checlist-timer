@@ -1,18 +1,24 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
 import { v4 as uuid } from 'uuid';
 import { ChecklistEvent, CreateEventType, EventType } from '@/types';
-import { useTimer } from './TimerContext';
+import { useTimer } from './utils/useTimer';
+import { getItemFromLocalStorageOrDefault } from './utils';
 
 type EventProviderType = {
   events: ChecklistEvent[];
   eventTypes: EventType[];
-  addEvent: (eventName: string, eventTypeId: string, timeStampOverride?: number) => void;
+  addEvent: (
+    eventName: string,
+    eventTypeId: string,
+    timeStampOverride?: number
+  ) => void;
   removeEventById: (eventId: string) => void;
   addEventType: (eventSetter: CreateEventType) => void;
   removeEventType: (id: string) => void;
   reorderEventTypes: (oldIndex: number, newIndex: number) => void;
   setAllEvents: (eventTypes?: EventType[], events?: ChecklistEvent[]) => void;
+  resetEvents: () => void;
 };
 
 type Props = {
@@ -23,24 +29,35 @@ export const EventContext = createContext<EventProviderType>(
   {} as EventProviderType
 );
 
-export const EventProvider = ({ children }: Props) => {
-  const [events, setEvents] = useState<ChecklistEvent[]>([]);
-  const [eventTypes, setEventTypes] = useState<EventType[]>([
-    {
-      id: uuid(),
-      type: 'counter',
-      label: 'Counter',
-      max: 5,
-    },
-    {
-      id: uuid(),
-      type: 'completed',
-      label: 'Completed',
-    },
-  ]);
-  const { timeInMilliseconds } = useTimer();
+const demoEventTypes: EventType[] = [
+  {
+    id: uuid(),
+    type: 'counter',
+    label: 'Counter',
+    max: 5,
+  },
+  {
+    id: uuid(),
+    type: 'completed',
+    label: 'Completed',
+  },
+];
 
-  const addEvent = (eventName: string, eventTypeId: string, timeStampOverride?: number) => {
+export const EventProvider = ({ children }: Props) => {
+  const { timeInMilliseconds } = useTimer();
+  const [events, setEvents] = useState<ChecklistEvent[]>(
+    getItemFromLocalStorageOrDefault('events', [])
+  );
+
+  const [eventTypes, setEventTypes] = useState<EventType[]>(
+    getItemFromLocalStorageOrDefault('eventTypes', demoEventTypes)
+  );
+
+  const addEvent = (
+    eventName: string,
+    eventTypeId: string,
+    timeStampOverride?: number
+  ) => {
     const newEvent: ChecklistEvent = {
       id: uuid(),
       eventTypeId,
@@ -55,9 +72,12 @@ export const EventProvider = ({ children }: Props) => {
     setEvents([...events.filter((event) => event.id !== eventId)]);
   };
 
-  const setAllEvents = (eventTypes?: EventType[], events?: ChecklistEvent[]) => {
-    setEventTypes([...eventTypes || []]);
-    setEvents([...events || []]);
+  const setAllEvents = (
+    eventTypes?: EventType[],
+    events?: ChecklistEvent[]
+  ) => {
+    setEventTypes([...(eventTypes || [])]);
+    setEvents([...(events || [])]);
   };
 
   const addEventType = (eventType: CreateEventType) => {
@@ -65,7 +85,9 @@ export const EventProvider = ({ children }: Props) => {
       throw new Error('Max must be greater than 0');
     }
 
-    if (eventTypes.filter((event) => event.label === eventType.label).length > 0) {
+    if (
+      eventTypes.filter((event) => event.label === eventType.label).length > 0
+    ) {
       throw new Error('Event type already exists');
     }
 
@@ -87,9 +109,14 @@ export const EventProvider = ({ children }: Props) => {
     setEventTypes([...sortedEvents]);
   };
 
+  const resetEvents = () => {
+    setEvents([]);
+  };
+
   useEffect(() => {
     localStorage.setItem('events', JSON.stringify(events));
-  }, [events]);
+    localStorage.setItem('eventTypes', JSON.stringify(eventTypes));
+  }, [events, eventTypes]);
 
   const eventState = {
     events,
@@ -99,6 +126,7 @@ export const EventProvider = ({ children }: Props) => {
     addEventType,
     removeEventType,
     reorderEventTypes,
+    resetEvents,
     setAllEvents,
   };
 
@@ -106,5 +134,3 @@ export const EventProvider = ({ children }: Props) => {
     <EventContext.Provider value={eventState}>{children}</EventContext.Provider>
   );
 };
-
-export const useEvent = () => useContext(EventContext);

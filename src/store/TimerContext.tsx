@@ -1,10 +1,12 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { useSettings } from './SettingsContext';
+import { createContext, useState, useEffect } from 'react';
+import { useSettings } from './utils/useSettings';
+import { getItemFromLocalStorageOrDefault } from './utils';
 
 type TimerProviderType = {
   timeInMilliseconds: number;
   isActive: boolean;
   isPaused: boolean;
+  setTimer: (timeInMilliseconds: number) => void;
   start: () => void;
   pause: () => void;
   resume: () => void;
@@ -15,63 +17,45 @@ type Props = {
   children: JSX.Element | JSX.Element[];
 };
 
-const TimerContext = createContext<TimerProviderType>({
-  timeInMilliseconds: 0,
-  isActive: false,
-  isPaused: false,
-  start: () => {},
-  pause: () => {},
-  resume: () => {},
-  reset: () => {},
-});
+export const TimerContext = createContext<TimerProviderType>(
+  {} as TimerProviderType
+);
 
 export const TimerProvider = ({ children }: Props): JSX.Element => {
-  const { timerIntervalInMilliseconds, allowBreaks } = useSettings();
-  const [timeInMilliseconds, setInMillisecondsTime] = useState(0);
-  const [isActive, setIsActive] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
+  const { timerIntervalInMilliseconds } = useSettings();
+  const [timeInMilliseconds, setTimeInMilliseconds] = useState(
+    getItemFromLocalStorageOrDefault('time', 0)
+  );
+  const [isActive, setIsActive] = useState(
+    getItemFromLocalStorageOrDefault('isActive', false)
+  );
+  const [isPaused, setIsPaused] = useState(
+    getItemFromLocalStorageOrDefault('isPaused', false)
+  );
 
   useEffect(() => {
     const timerInterval = Number(timerIntervalInMilliseconds);
     let timeInterval: NodeJS.Timeout | undefined = undefined;
-    let cacheInterval: NodeJS.Timeout | undefined = undefined;
 
     if (isActive && !isPaused) {
       timeInterval = setInterval(() => {
-        setInMillisecondsTime((time) => time + timerInterval);
+        setTimeInMilliseconds((time) => time + timerInterval);
       }, timerInterval);
-
-      cacheInterval = setInterval(() => {
-        localStorage.setItem('time', timeInMilliseconds.toString());
-      }, 1000);
     } else {
       clearInterval(timeInterval);
-      clearInterval(cacheInterval);
     }
+
     return () => {
       clearInterval(timeInterval);
-      clearInterval(cacheInterval);
     };
   }, [isActive, isPaused]);
 
   useEffect(() => {
-    const storedTime = localStorage.getItem('time');
-    const storedIsActive = localStorage.getItem('isActive');
-    const storedIsPaused = localStorage.getItem('isPaused');
-
-    if (storedTime) {
-      const time = parseInt(storedTime);
-      setInMillisecondsTime(time);
+    const cachedTimeInMilliseconds = Number(localStorage.getItem('time') || 0);
+    if (timeInMilliseconds - cachedTimeInMilliseconds >= 1000) {
+      localStorage.setItem('time', timeInMilliseconds.toString());
     }
-
-    if (storedIsActive) {
-      setIsActive(JSON.parse(storedIsActive));
-    }
-
-    if (storedIsPaused) {
-      setIsPaused(JSON.parse(storedIsPaused));
-    }
-  }, []);
+  }, [timeInMilliseconds]);
 
   useEffect(() => {
     localStorage.setItem('isActive', isActive.toString());
@@ -79,39 +63,42 @@ export const TimerProvider = ({ children }: Props): JSX.Element => {
   }, [isActive, isPaused]);
 
   const start = () => {
-    setInMillisecondsTime(0);
+    setTimeInMilliseconds(0);
     setIsActive(true);
     setIsPaused(false);
     localStorage.setItem('time', '0');
   };
 
   const pause = () => {
-    if (!allowBreaks) {
-      return;
-    }
-
     setIsPaused(true);
   };
 
   const resume = () => {
-    if (!allowBreaks) {
-      return;
-    }
-
     setIsPaused(false);
   };
 
   const reset = () => {
-    setInMillisecondsTime(0);
+    setTimeInMilliseconds(0);
     setIsActive(false);
     setIsPaused(false);
     localStorage.setItem('time', '0');
+  };
+
+  const setTimer = (timeInMilliseconds: number) => {
+    setTimeInMilliseconds(timeInMilliseconds);
+    localStorage.setItem('time', timeInMilliseconds.toString());
+
+    if (timeInMilliseconds !== 0) {
+      setIsActive(true);
+      setIsPaused(true);
+    }
   };
 
   const timerState = {
     timeInMilliseconds,
     isActive,
     isPaused,
+    setTimer,
     start,
     pause,
     resume,
@@ -122,5 +109,3 @@ export const TimerProvider = ({ children }: Props): JSX.Element => {
     <TimerContext.Provider value={timerState}>{children}</TimerContext.Provider>
   );
 };
-
-export const useTimer = () => useContext(TimerContext);

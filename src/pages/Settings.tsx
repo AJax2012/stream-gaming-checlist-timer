@@ -1,4 +1,5 @@
 import { RgbColorPicker, RgbaColorPicker } from 'react-colorful';
+import { MdClose } from 'react-icons/md';
 import {
   Button,
   Card,
@@ -14,17 +15,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui';
-import { useEvent, useSettings } from '@/store';
+import { useEvent, useSettings, useTimer } from '@/store';
 import { TimerInterval } from '@/types';
+import { ChangeEvent } from 'react';
 
 const Settings = () => {
+  const { events, eventTypes, setAllEvents } = useEvent();
+
   const {
-    events,
-    eventTypes,
-    setAllEvents,
-  } = useEvent();
-  const {
-    allowBreaks,
     backgroundColor,
     backgroundPicture,
     cardColor,
@@ -32,7 +30,6 @@ const Settings = () => {
     eventTitle,
     timerIntervalInMilliseconds,
     timerPauseColor,
-    setAllowBreaks,
     setBackgroundColor,
     setBackgroundPicture,
     setCardColor,
@@ -44,12 +41,10 @@ const Settings = () => {
     resetCustomizations,
   } = useSettings();
 
-  const toggleAllowBreaks = (value: string) => {
-    setAllowBreaks(value === 'true' ? true : false);
-  };
+  const { timeInMilliseconds, setTimer } = useTimer();
 
-  const handleBackgroundFileUpload = (event: any) => {
-    const file = event?.target?.files[0];
+  const handleBackgroundFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event?.target?.files?.[0];
     if (!file) {
       return;
     }
@@ -57,12 +52,15 @@ const Settings = () => {
     setBackgroundPicture(URL.createObjectURL(file));
   };
 
+  const handleClearEventTitle = () => {
+    setEventTitle('');
+  };
+
   const handleSettingsDownload = () => {
     const link = document.createElement('a');
     link.download = 'game-stream-settings.json';
 
     const data = JSON.stringify({
-      allowBreaks,
       backgroundColor,
       backgroundPicture,
       cardColor,
@@ -71,6 +69,7 @@ const Settings = () => {
       fontColor,
       eventTitle,
       timerIntervalInMilliseconds,
+      timeInMilliseconds,
       timerPauseColor,
     });
 
@@ -80,8 +79,8 @@ const Settings = () => {
     link.click();
   };
 
-  const handleSettingsUpload = (event: any) => {
-    const file = event?.target?.files[0];
+  const handleSettingsUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event?.target?.files?.[0];
     if (!file) {
       return;
     }
@@ -89,7 +88,6 @@ const Settings = () => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const data = JSON.parse(e.target?.result as string);
-      setAllowBreaks(data.allowBreaks);
       setBackgroundColor(data.backgroundColor);
       setBackgroundPicture(data.backgroundPicture);
       setCardColor(data.cardColor);
@@ -98,6 +96,7 @@ const Settings = () => {
       setTimerIntervalInMilliseconds(data.timerIntervalInMilliseconds);
       setTimerPauseColor(data.timerPauseColor);
       setAllEvents(data.eventTypes, data.events);
+      setTimer(data.timeInMilliseconds);
     };
     reader.readAsText(file);
   };
@@ -131,14 +130,23 @@ const Settings = () => {
                 </div>
                 <div className="mb-4">
                   <Label htmlFor="eventTitle">Event Title</Label>
-                  <Input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="eventTitle"
-                    type="text"
-                    placeholder="Enter event title"
-                    value={eventTitle}
-                    onChange={(e) => setEventTitle(e.target.value)}
-                  />
+                  <div className='relative'>
+                    <Input
+                      id="eventTitle"
+                      type="text"
+                      placeholder="Enter event title"
+                      className='peer event-title'
+                      value={eventTitle}
+                      onChange={(e) => setEventTitle(e.target.value)}
+                    />
+                    <Button
+                      variant='ghost'
+                      onClick={handleClearEventTitle}
+                      className="hidden peer-focus:flex peer-hover:flex absolute inset-y-0 right-0 pr-3"
+                    >
+                      <MdClose />
+                    </Button>
+                  </div>
                 </div>
                 <div className="mb-4">
                   <Label htmlFor="timerInterval">Timer Interval</Label>
@@ -156,23 +164,6 @@ const Settings = () => {
                         <SelectItem value="10">10 milliseconds</SelectItem>
                         <SelectItem value="100">100 milliseconds</SelectItem>
                         <SelectItem value="1000">1 second</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="mb-4">
-                  <Label htmlFor="allowBreaks">Allow Breaks</Label>
-                  <Select
-                    value={allowBreaks ? 'true' : 'false'}
-                    onValueChange={toggleAllowBreaks}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select allow breaks" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="true">True</SelectItem>
-                        <SelectItem value="false">False</SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -200,7 +191,6 @@ const Settings = () => {
                   id="backgroundPicture"
                   type="file"
                   accept="image/*"
-                  value={backgroundPicture}
                   onChange={handleBackgroundFileUpload}
                 />
                 <Button onClick={resetBackgroundPicture}>

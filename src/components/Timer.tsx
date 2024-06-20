@@ -2,17 +2,23 @@ import { useMemo } from 'react';
 import cn from 'classnames';
 import { Duration } from 'luxon';
 import { FaPause, FaPlay } from 'react-icons/fa';
-import { useSettings, useTimer } from '@/store';
+import { useEvent, useSettings, useTimer } from '@/store';
 import { Button } from './ui';
 
 const Timer = () => {
-  const { timeInMilliseconds, isActive, isPaused, pause, resume, start } =
-    useTimer();
+  const { resetEvents } = useEvent();
+
   const {
-    allowBreaks,
-    timerIntervalInMilliseconds,
-    timerPauseColor,
-  } = useSettings();
+    timeInMilliseconds,
+    isActive,
+    isPaused,
+    pause,
+    resume,
+    start,
+    reset,
+  } = useTimer();
+
+  const { timerIntervalInMilliseconds, timerPauseColor } = useSettings();
 
   const format = useMemo(() => {
     switch (timerIntervalInMilliseconds) {
@@ -24,13 +30,25 @@ const Timer = () => {
     }
   }, [timerIntervalInMilliseconds]);
 
+  const handleReset = () => {
+    reset();
+    resetEvents();
+  };
+
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center gap-2">
       <Button className={cn({ hidden: isActive })} onClick={start}>
         Start
       </Button>
       <Button
-        className={cn({ hidden: !isActive || !allowBreaks })}
+        variant="destructive"
+        className={cn({ hidden: !isActive || !isPaused })}
+        onClick={handleReset}
+      >
+        Reset
+      </Button>
+      <Button
+        className={cn({ hidden: !isActive })}
         variant={isPaused ? 'secondary' : 'ghost'}
         onClick={isPaused ? resume : pause}
       >

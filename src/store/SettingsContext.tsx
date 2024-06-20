@@ -1,11 +1,11 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import { TimerInterval } from '@/types';
 import { RgbColor, RgbaColor } from 'react-colorful';
+import { getItemFromLocalStorageOrDefault } from './utils';
 
 const defaultTimerInterval: TimerInterval = 1000;
 
 type SettingsProviderType = {
-  allowBreaks: boolean;
   backgroundColor: RgbaColor;
   backgroundPicture: string;
   cardColor: RgbaColor;
@@ -13,7 +13,6 @@ type SettingsProviderType = {
   fontColor: RgbColor;
   timerIntervalInMilliseconds: TimerInterval;
   timerPauseColor: RgbColor;
-  setAllowBreaks: (allowBreaks: boolean) => void;
   setBackgroundColor: (backgroundColor: RgbaColor) => void;
   setBackgroundPicture: (backgroundPicture: string) => void;
   setCardColor: (cardColor: RgbaColor) => void;
@@ -29,77 +28,63 @@ type Props = {
   children: JSX.Element | JSX.Element[];
 };
 
-const SettingsContext = createContext<SettingsProviderType>(
+export const SettingsContext = createContext<SettingsProviderType>(
   {} as SettingsProviderType
 );
 
-const parseTimerInterval = (timerInterval: number | string): TimerInterval => {
-  const validTimerIntervals = [10, 100, 1000];
-
-  if (validTimerIntervals.includes(Number(timerInterval) as TimerInterval)) {
-    return Number(timerInterval) as TimerInterval;
-  }
-
-  return defaultTimerInterval;
-};
-
 export const SettingsProvider = ({ children }: Props): JSX.Element => {
-  const [allowBreaks, setAllowBreaks] = useState(
-    localStorage.getItem('allowBreaks') === 'true'
-  );
   const [eventTitle, setEventTitle] = useState(
-    localStorage.getItem('eventTitle') ||
-    'Please update event title in the settings page'
+    getItemFromLocalStorageOrDefault(
+      'eventTitle',
+      'Please update event title in the settings page'
+    )
   );
+
   const [timerIntervalInMilliseconds, setTimerIntervalInMilliseconds] =
     useState<TimerInterval>(
-      (Number(localStorage.getItem('timerInterval')) as TimerInterval) ||
-      defaultTimerInterval
+      getItemFromLocalStorageOrDefault('timerInterval', defaultTimerInterval)
     );
 
   const [backgroundPicture, setBackgroundPicture] = useState(
-    localStorage.getItem('backgroundPicture') || ''
+    getItemFromLocalStorageOrDefault('backgroundPicture', '')
   );
+
   const [backgroundColor, setBackgroundColor] = useState<RgbaColor>(
-    localStorage.getItem('backgroundColor')
-      ? JSON.parse(localStorage.getItem('backgroundColor') as string)
-      : { r: 248, g: 250, b: 252, a: 1 }
+    getItemFromLocalStorageOrDefault('backgroundColor', {
+      r: 248,
+      g: 250,
+      b: 252,
+      a: 1,
+    })
   );
+
   const [cardColor, setCardColor] = useState<RgbaColor>(
-    localStorage.getItem('cardColor')
-      ? JSON.parse(localStorage.getItem('cardColor') as string)
-      : { r: 255, g: 255, b: 255, a: 0.5 }
+    getItemFromLocalStorageOrDefault('cardColor', {
+      r: 255,
+      g: 255,
+      b: 255,
+      a: 0.5,
+    })
   );
+
   const [timerPauseColor, setTimerPauseColor] = useState<RgbColor>(
-    localStorage.getItem('timerPauseColor')
-      ? JSON.parse(localStorage.getItem('timerPauseColor') as string)
-      : { r: 239, g: 68, b: 68 }
+    getItemFromLocalStorageOrDefault('timerPauseColor', {
+      r: 239,
+      g: 68,
+      b: 68,
+    })
   );
+
   const [fontColor, setFontColor] = useState<RgbColor>(
-    localStorage.getItem('fontColor')
-      ? JSON.parse(localStorage.getItem('fontColor') as string)
-      : { r: 0, g: 0, b: 0 }
+    getItemFromLocalStorageOrDefault('fontColor', { r: 0, g: 0, b: 0 })
   );
 
   useEffect(() => {
-    const storedAllowBreaks = localStorage.getItem('allowBreaks');
-    const storedTimerInterval = localStorage.getItem('timerInterval');
-
-    if (storedAllowBreaks) {
-      setAllowBreaks(JSON.parse(storedAllowBreaks));
-    }
-    if (storedTimerInterval) {
-      setTimerIntervalInMilliseconds(parseTimerInterval(storedTimerInterval));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('allowBreaks', allowBreaks.toString());
     localStorage.setItem(
       'timerInterval',
       timerIntervalInMilliseconds.toString()
     );
-  }, [allowBreaks, timerIntervalInMilliseconds]);
+  }, [timerIntervalInMilliseconds]);
 
   useEffect(() => {
     document.title = eventTitle;
@@ -142,7 +127,6 @@ export const SettingsProvider = ({ children }: Props): JSX.Element => {
   };
 
   const settingsState = {
-    allowBreaks,
     backgroundColor,
     backgroundPicture,
     cardColor,
@@ -150,7 +134,6 @@ export const SettingsProvider = ({ children }: Props): JSX.Element => {
     fontColor,
     timerIntervalInMilliseconds,
     timerPauseColor,
-    setAllowBreaks,
     setBackgroundColor,
     setBackgroundPicture,
     setCardColor,
@@ -168,5 +151,3 @@ export const SettingsProvider = ({ children }: Props): JSX.Element => {
     </SettingsContext.Provider>
   );
 };
-
-export const useSettings = () => useContext(SettingsContext);
