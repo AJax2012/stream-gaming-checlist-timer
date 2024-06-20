@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import cn from 'classnames';
+
 import {
   DndContext,
   closestCenter,
@@ -9,12 +10,15 @@ import {
   useSensors,
   DragEndEvent,
 } from '@dnd-kit/core';
+
 import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+
 import { FaEdit } from 'react-icons/fa';
+
 import { useEvent, useSettings, useTimer } from '@/store';
 import { Button, Card } from './ui';
 import { AddEventType, Counter, Completed } from './EventTypes';

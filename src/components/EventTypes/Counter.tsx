@@ -4,6 +4,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { FaTrashAlt } from 'react-icons/fa';
 import { MdDragIndicator } from 'react-icons/md';
+
 import { Button, Input, Label } from '@/components/ui';
 import { useEvent, useTimer } from '@/store';
 import { EventTypeOption } from '@/types';
@@ -15,7 +16,7 @@ type Props = {
   optionSelected?: EventTypeOption;
   isEditMode: boolean;
   isRadioOption?: boolean;
-  onChange?: (e: ChangeEvent<any>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
 const Counter = ({
@@ -48,7 +49,9 @@ const Counter = ({
 
   const decrement = () => {
     if (count > 0) {
-      const eventToDelete = events.filter((event) => event.eventTypeId === id).pop();
+      const eventToDelete = events
+        .filter((event) => event.eventTypeId === id)
+        .pop();
       removeEventById(eventToDelete?.id as string);
     }
   };
@@ -84,7 +87,7 @@ const Counter = ({
         })}
       >
         <Label className="mr-8 font-semibold text-xl">{label}</Label>
-        {max && <p className='text-sm text-muted-foreground'>Needed: {max}</p>}
+        {max && <p className="text-sm text-muted-foreground">Needed: {max}</p>}
       </td>
       <td
         className={cn('py-4 px-1 text-center', {

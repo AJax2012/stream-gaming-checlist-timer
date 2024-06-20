@@ -43,10 +43,15 @@ const AddEventType = () => {
     },
     validationSchema: object({
       label: string().required('Required'),
-      eventTypeSelected: mixed().oneOf(['counter', 'completed']).required('Required'),
+      eventTypeSelected: mixed()
+        .oneOf(['counter', 'completed'])
+        .required('Required'),
       maxCount: number().notRequired(),
     }),
-    onSubmit: ({ label, eventTypeSelected, maxCount }, { resetForm, setErrors }) => {
+    onSubmit: (
+      { label, eventTypeSelected, maxCount },
+      { resetForm, setErrors }
+    ) => {
       if (eventTypes.filter((event) => event.label === label).length > 0) {
         setErrors({ label: 'Event type already exists' });
         return;
@@ -137,7 +142,9 @@ const AddEventType = () => {
             )}
           </div>
           <div
-            className={cn('mt-2 mb-6', { hidden: values.eventTypeSelected === 'completed' })}
+            className={cn('mt-2 mb-6', {
+              hidden: values.eventTypeSelected === 'completed',
+            })}
           >
             <Label htmlFor="maxCountInput">Max Count</Label>
             <Input

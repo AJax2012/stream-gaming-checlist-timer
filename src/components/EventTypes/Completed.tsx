@@ -4,6 +4,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { FaCheck, FaTrashAlt } from 'react-icons/fa';
 import { MdClose, MdDragIndicator } from 'react-icons/md';
+
 import { Button, Label } from '@/components/ui';
 import { useEvent, useTimer } from '@/store';
 import { EventTypeOption } from '@/types';
@@ -14,7 +15,7 @@ type Props = {
   optionSelected?: EventTypeOption;
   isEditMode: boolean;
   isRadioOption?: boolean;
-  onChange?: (e: ChangeEvent<any>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
 const Completed = ({
@@ -39,7 +40,9 @@ const Completed = ({
   };
 
   const removeCompleted = () => {
-    const eventToDelete = events.filter((event) => event.eventTypeId === id).pop();
+    const eventToDelete = events
+      .filter((event) => event.eventTypeId === id)
+      .pop();
     removeEventById(eventToDelete?.id as string);
   };
 
