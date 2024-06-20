@@ -75,13 +75,13 @@
   }
 }
 
-svg path {
+#favicon svg path {
   color: black;
-  fill: white;
+  fill: black;
 }
 
 @media (prefers-color-scheme: dark) {
-  svg path {
+  #favicon svg path {
     color: white;
     fill: white;
   }
