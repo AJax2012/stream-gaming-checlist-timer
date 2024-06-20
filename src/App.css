@@ -4,3 +4,10 @@
   width: 100%;
   text-align: center;
 }
+
+body {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
