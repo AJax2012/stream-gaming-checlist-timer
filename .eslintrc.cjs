@@ -2,7 +2,7 @@ module.exports = {
   root: true,
   env: {
     browser: true,
-    es2020: true
+    es2020: true,
   },
   extends: [
     'eslint:recommended',
@@ -10,10 +10,7 @@ module.exports = {
     'plugin:react-hooks/recommended',
     'prettier',
   ],
-  ignorePatterns: [
-    'dist',
-    '.eslintrc.cjs'
-  ],
+  ignorePatterns: ['dist', '.eslintrc.cjs', 'tailwind.config.cjs'],
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh'],
   rules: {
