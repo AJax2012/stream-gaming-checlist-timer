@@ -74,3 +74,15 @@
     @apply bg-background text-foreground;
   }
 }
+
+svg path {
+  color: black;
+  fill: white;
+}
+
+@media (prefers-color-scheme: dark) {
+  svg path {
+    color: white;
+    fill: white;
+  }
+}
