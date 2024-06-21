@@ -130,17 +130,17 @@ const Settings = () => {
                 </div>
                 <div className="mb-4">
                   <Label htmlFor="eventTitle">Event Title</Label>
-                  <div className='relative'>
+                  <div className="relative">
                     <Input
                       id="eventTitle"
                       type="text"
                       placeholder="Enter event title"
-                      className='peer event-title'
+                      className="peer event-title"
                       value={eventTitle}
                       onChange={(e) => setEventTitle(e.target.value)}
                     />
                     <Button
-                      variant='ghost'
+                      variant="ghost"
                       onClick={handleClearEventTitle}
                       className="hidden peer-focus:flex peer-hover:flex absolute inset-y-0 right-0 pr-3"
                     >
