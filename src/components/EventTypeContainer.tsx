@@ -18,6 +18,8 @@ import { useEvent, useSettings, useTimer } from '@/store';
 import { Card } from './ui';
 import { Counter, Completed, EventEditButtons } from './EventTypes';
 
+const defaultWidth = 510;
+
 const EventTypesContainer = () => {
   const tableRef = useRef<HTMLTableElement>(null);
   const [isEditMode, setIsEditMode] = useState(true);
@@ -56,6 +58,11 @@ const EventTypesContainer = () => {
     () => {
       let interval: NodeJS.Timeout | undefined = undefined;
 
+      if (eventTypes.length === 0) {
+        setTableWidth(defaultWidth);
+        return;
+      }
+
       if (!isActive || isPaused || !tableRef.current?.clientWidth) {
         interval = setInterval(() => {
           if (tableRef.current?.clientWidth !== tableWidth) {
@@ -68,7 +75,7 @@ const EventTypesContainer = () => {
 
       return () => clearInterval(interval);
     },
-    [tableRef.current?.clientWidth, isActive, isPaused]
+    [eventTypes, isActive, isPaused, tableRef.current?.clientWidth]
   );
 
   return (
@@ -114,7 +121,7 @@ const EventTypesContainer = () => {
             </table>
             {(!isActive || isPaused) && (
               <EventEditButtons
-                width={`${tableWidth ?? 510}px`}
+                width={`${tableWidth ?? defaultWidth}px`}
                 toggleEditMode={toggleEditMode}
               />
             )}
