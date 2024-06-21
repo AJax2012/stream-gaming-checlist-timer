@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
-import cn from 'classnames';
-
+import { useEffect, useRef, useState } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -10,21 +8,20 @@ import {
   useSensors,
   DragEndEvent,
 } from '@dnd-kit/core';
-
 import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 
-import { FaEdit } from 'react-icons/fa';
-
 import { useEvent, useSettings, useTimer } from '@/store';
-import { Button, Card } from './ui';
-import { AddEventType, Counter, Completed } from './EventTypes';
+import { Card } from './ui';
+import { Counter, Completed, EventEditButtons } from './EventTypes';
 
 const EventTypesContainer = () => {
+  const tableRef = useRef<HTMLTableElement>(null);
   const [isEditMode, setIsEditMode] = useState(true);
+  const [tableWidth, setTableWidth] = useState<number>();
   const { eventTypes, reorderEventTypes } = useEvent();
   const { isActive, isPaused } = useTimer();
   const { cardColor } = useSettings();
@@ -45,11 +42,34 @@ const EventTypesContainer = () => {
     }
   };
 
+  const toggleEditMode = () => {
+    setIsEditMode(!isEditMode);
+  };
+
   useEffect(() => {
     if (isActive && !isPaused) {
       setIsEditMode(false);
     }
   }, [isActive, isPaused]);
+
+  useEffect(
+    () => {
+      let interval: NodeJS.Timeout | undefined = undefined;
+
+      if (!isActive || isPaused || !tableRef.current?.clientWidth) {
+        interval = setInterval(() => {
+          if (tableRef.current?.clientWidth !== tableWidth) {
+            setTableWidth(tableRef.current?.clientWidth);
+          }
+        }, 10);
+      } else {
+        clearInterval(interval);
+      }
+
+      return () => clearInterval(interval);
+    },
+    [tableRef.current?.clientWidth, isActive, isPaused]
+  );
 
   return (
     <Card
@@ -68,7 +88,7 @@ const EventTypesContainer = () => {
             items={eventTypes}
             strategy={verticalListSortingStrategy}
           >
-            <table className="mx-auto table-auto w-auto border-separate border-spacing-x-0 border-spacing-y-2">
+            <table ref={tableRef} className="mx-auto table-auto w-auto border-separate border-spacing-x-0 border-spacing-y-2">
               <tbody>
                 {eventTypes.map((event) =>
                   event.type === 'counter' ? (
@@ -93,25 +113,10 @@ const EventTypesContainer = () => {
               </tbody>
             </table>
             {(!isActive || isPaused) && (
-              <div
-                className={cn('flex gap-2 mx-auto', {
-                  'max-w-[30rem]': isEditMode,
-                  'max-w-[21.5rem]': !isEditMode,
-                })}
-              >
-                <div className="text-center border-2 rounded-lg border-dashed w-1/2">
-                  <AddEventType />
-                </div>
-                <div className="text-center border-2 rounded-lg border-dashed w-1/2">
-                  <Button
-                    variant="ghost"
-                    className="w-full"
-                    onClick={() => setIsEditMode(!isEditMode)}
-                  >
-                    <FaEdit />
-                  </Button>
-                </div>
-              </div>
+              <EventEditButtons
+                width={`${tableWidth ?? 510}px`}
+                toggleEditMode={toggleEditMode}
+              />
             )}
           </SortableContext>
         </DndContext>
