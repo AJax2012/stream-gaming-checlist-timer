@@ -73,17 +73,14 @@ const EventTypesContainer = () => {
                   event.type === 'counter' ? (
                     <Counter
                       key={event.id}
-                      id={event.id}
-                      max={event.max}
-                      label={event.label}
+                      eventType={event}
                       isEditMode={isEditMode}
                     />
                   ) : (
                     event.type === 'completed' && (
                       <Completed
                         key={event.id}
-                        id={event.id}
-                        label={event.label}
+                        eventType={event}
                         isEditMode={isEditMode}
                       />
                     )

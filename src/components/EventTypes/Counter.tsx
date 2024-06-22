@@ -7,12 +7,10 @@ import { MdDragIndicator } from 'react-icons/md';
 
 import { Button, Input, Label } from '@/components/ui';
 import { useEvent, useTimer } from '@/store';
-import { EventTypeOption } from '@/types';
+import { EventType, EventTypeOption } from '@/types';
 
 type Props = {
-  id: string;
-  max?: number;
-  label: string;
+  eventType: EventType;
   optionSelected?: EventTypeOption;
   isEditMode: boolean;
   isRadioOption?: boolean;
@@ -20,15 +18,15 @@ type Props = {
 };
 
 const Counter = ({
-  id,
-  max,
-  label,
+  eventType,
   optionSelected,
   isEditMode,
   isRadioOption = false,
   onChange,
 }: Props) => {
-  const { addEvent, removeEventById, events, removeEventType } = useEvent();
+  const { id, label, max } = eventType;
+
+  const { addEvent, events, removeEventById, removeEventType } = useEvent();
   const { isActive, isPaused } = useTimer();
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
@@ -43,7 +41,7 @@ const Counter = ({
 
   const increment = () => {
     if (canIncrement) {
-      addEvent(label, id);
+      addEvent(eventType);
     }
   };
 
@@ -73,7 +71,7 @@ const Counter = ({
             type="radio"
             id="add-counter-radio"
             value="counter"
-            name="eventTypeSelected"
+            name="type"
             className="h-4 w-4 cursor-pointer"
             checked={optionSelected === 'counter'}
             onChange={onChange}

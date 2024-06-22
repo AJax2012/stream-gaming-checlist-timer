@@ -1,5 +1,6 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useRef, RefObject } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
+import type { FireworksHandlers } from '@fireworks-js/react';
 import { v4 as uuid } from 'uuid';
 import { ChecklistEvent, CreateEventType, EventType } from '@/types';
 import { useTimer } from './utils/useTimer';
@@ -8,13 +9,12 @@ import { getItemFromLocalStorageOrDefault } from './utils';
 type EventProviderType = {
   events: ChecklistEvent[];
   eventTypes: EventType[];
-  addEvent: (
-    eventName: string,
-    eventTypeId: string,
-    timeStampOverride?: number
-  ) => void;
-  removeEventById: (eventId: string) => void;
+  fireworksRef: RefObject<FireworksHandlers & HTMLDivElement>;
+  fireworksHidden: boolean;
+  addEvent: (eventType: EventType, timeStampOverride?: number) => void;
   addEventType: (eventSetter: CreateEventType) => void;
+  hideFireworks: () => void;
+  removeEventById: (eventId: string) => void;
   removeEventType: (id: string) => void;
   reorderEventTypes: (oldIndex: number, newIndex: number) => void;
   setAllEvents: (eventTypes?: EventType[], events?: ChecklistEvent[]) => void;
@@ -35,16 +35,20 @@ const demoEventTypes: EventType[] = [
     type: 'counter',
     label: 'Counter',
     max: 5,
+    celebrateOnCompleted: false,
   },
   {
     id: uuid(),
     type: 'completed',
     label: 'Completed',
+    celebrateOnCompleted: true,
   },
 ];
 
 export const EventProvider = ({ children }: Props) => {
   const { timeInMilliseconds } = useTimer();
+  const fireworksRef = useRef<FireworksHandlers & HTMLDivElement>(null);
+  const [fireworksHidden, setFireworksHidden] = useState(false);
   const [events, setEvents] = useState<ChecklistEvent[]>(
     getItemFromLocalStorageOrDefault('events', [])
   );
@@ -53,17 +57,33 @@ export const EventProvider = ({ children }: Props) => {
     getItemFromLocalStorageOrDefault('eventTypes', demoEventTypes)
   );
 
-  const addEvent = (
-    eventName: string,
-    eventTypeId: string,
-    timeStampOverride?: number
-  ) => {
+  const isEventTypeCompleted = (eventType: EventType) => {
+    if (!eventType.celebrateOnCompleted) {
+      return false;
+    }
+
+    const eventsCount =
+      events.filter((event) => event.eventTypeId === eventType.id).length + 1;
+
+    if (eventType.type === 'completed' && eventsCount === 1) {
+      return true;
+    }
+
+    return eventsCount === eventType.max;
+  };
+
+  const addEvent = (eventType: EventType, timeStampOverride?: number) => {
     const newEvent: ChecklistEvent = {
       id: uuid(),
-      eventTypeId,
-      name: eventName,
+      eventTypeId: eventType.id,
+      name: eventType.label,
       timestampInMilliseconds: timeStampOverride || timeInMilliseconds,
     };
+
+    if (isEventTypeCompleted(eventType)) {
+      fireworksRef.current?.start();
+      setFireworksHidden(false);
+    }
 
     setEvents([...events, newEvent]);
   };
@@ -113,17 +133,34 @@ export const EventProvider = ({ children }: Props) => {
     setEvents([]);
   };
 
+  const hideFireworks = () => {
+    if (fireworksRef.current) {
+      fireworksRef.current?.stop();
+      fireworksRef.current?.clear();
+      setFireworksHidden(true);
+    }
+  };
+
   useEffect(() => {
     localStorage.setItem('events', JSON.stringify(events));
     localStorage.setItem('eventTypes', JSON.stringify(eventTypes));
   }, [events, eventTypes]);
 
+  useEffect(() => {
+    if (fireworksRef?.current && timeInMilliseconds === 0) {
+      hideFireworks();
+    }
+  }, [fireworksRef?.current, timeInMilliseconds]);
+
   const eventState = {
     events,
     eventTypes,
+    fireworksRef,
+    fireworksHidden,
     addEvent,
-    removeEventById,
     addEventType,
+    hideFireworks,
+    removeEventById,
     removeEventType,
     reorderEventTypes,
     resetEvents,

@@ -3,10 +3,11 @@ import cn from 'classnames';
 import { useFormik } from 'formik';
 import { MdAdd } from 'react-icons/md';
 import { GoAlert } from 'react-icons/go';
-import { object, string, mixed, number } from 'yup';
+import { boolean, mixed, number, object, string } from 'yup';
 
 import {
   Button,
+  Checkbox,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -32,35 +33,47 @@ const AddEventType = () => {
     values,
     handleChange,
     handleReset,
-    isValid,
     errors,
     touched,
   } = useFormik({
     initialValues: {
       label: '',
-      eventTypeSelected: 'completed',
-      maxCount: 0,
+      celebrateOnCompleted: false,
+      type: 'completed',
+      max: 0,
     },
     validationSchema: object({
       label: string().required('Required'),
-      eventTypeSelected: mixed()
+      celebrateOnCompleted: boolean().required('Required'),
+      type: mixed()
         .oneOf(['counter', 'completed'])
         .required('Required'),
-      maxCount: number().notRequired(),
+      max: number().test({
+        name: 'max',
+        message: 'Max must be greater than 0 when celebrating for a counter',
+        test: (max, { parent }) => {
+          if (parent.type === 'counter' && parent.celebrateOnCompleted === true) {
+            return !!max && max > 0;
+          }
+
+          return true;
+        }
+      }),
     }),
     onSubmit: (
-      { label, eventTypeSelected, maxCount },
+      { celebrateOnCompleted, type, label, max },
       { resetForm, setErrors }
     ) => {
       if (eventTypes.filter((event) => event.label === label).length > 0) {
-        setErrors({ label: 'Event type already exists' });
+        setErrors({ label: 'Event tracker already exists' });
         return;
       }
 
       addEventType({
         label,
-        type: eventTypeSelected as EventTypeOption,
-        max: maxCount > 0 ? maxCount : undefined,
+        type: type as EventTypeOption,
+        max: max > 0 ? max : undefined,
+        celebrateOnCompleted,
       });
 
       resetForm();
@@ -90,40 +103,65 @@ const AddEventType = () => {
           }}
         >
           <DialogHeader>
-            <DialogTitle>Add Event Type</DialogTitle>
+            <DialogTitle>Add Event Tracker</DialogTitle>
             <DialogDescription>
-              Add a new event type to keep track of your gaming session.
+              Add a new event tracker to keep track of your gaming session.
             </DialogDescription>
           </DialogHeader>
-          <fieldset name="eventTypeSelected">
-            <legend className="sr-only">Event Type</legend>
+          <fieldset name="type">
+            <legend className="sr-only">Event Tracker</legend>
             <table className="mx-auto table-auto w-auto border-separate border-spacing-x-0 border-spacing-y-2">
               <tbody>
                 <Completed
-                  id="add-completed"
-                  label="Completed"
+                  eventType={{
+                    id: 'add-completed',
+                    type: 'completed',
+                    label: 'Completed',
+                    celebrateOnCompleted: false,
+                  }}
                   isRadioOption
-                  optionSelected={values.eventTypeSelected as EventTypeOption}
+                  optionSelected={values.type as EventTypeOption}
                   onChange={handleChange}
                   isEditMode={false}
                 />
                 <Counter
-                  id="add-counter"
-                  label="Counter"
-                  max={5}
+                  eventType={{
+                    id: 'add-counter',
+                    type: 'counter',
+                    label: 'Counter',
+                    celebrateOnCompleted: false,
+                    max: 5,
+                  }}
                   isRadioOption
-                  optionSelected={values.eventTypeSelected as EventTypeOption}
+                  optionSelected={values.type as EventTypeOption}
                   onChange={handleChange}
                   isEditMode={false}
                 />
               </tbody>
             </table>
           </fieldset>
-          <div className="mt-2 mb-6">
-            <Label htmlFor="nameInput">Event Type Name</Label>
+          <fieldset name="celebrateOnCompleted">
+            <div className="mt-4 mb-4 flex items-center space-x-2">
+              <Checkbox
+                id="celebrateOnCompletedInput"
+                name="celebrateOnCompleted"
+                checked={values.celebrateOnCompleted}
+                onClick={() => {
+                  handleChange({
+                    target: { name: 'celebrateOnCompleted', value: !values.celebrateOnCompleted },
+                  });
+                }}
+              />
+              <Label htmlFor="celebrateOnCompletedInput">
+                Celebrate on Completion
+              </Label>
+            </div>
+          </fieldset>
+          <div className="mb-6">
+            <Label htmlFor="nameInput">Label</Label>
             <Input
               type="text"
-              placeholder="Event Type Name"
+              placeholder="Label for Event Tracker"
               name="label"
               id="labelInput"
               minLength={2}
@@ -143,17 +181,23 @@ const AddEventType = () => {
           </div>
           <div
             className={cn('mt-2 mb-6', {
-              hidden: values.eventTypeSelected === 'completed',
+              hidden: values.type === 'completed',
             })}
           >
-            <Label htmlFor="maxCountInput">Max Count</Label>
+            <Label htmlFor="maxInput">Max Count</Label>
             <Input
               type="number"
               placeholder="Max Count"
-              name="maxCount"
-              id="maxCountInput"
+              name="max"
+              id="maxInput"
               onChange={handleChange}
             />
+            {errors.max && touched.max && (
+              <p className="text-red-500 text-sm flex items-center">
+                <GoAlert className="mr-1" />
+                {errors.max}
+              </p>
+            )}
           </div>
           <DialogFooter>
             <Button type="reset" onClick={handleReset} variant="destructive">
@@ -162,7 +206,6 @@ const AddEventType = () => {
             <Button
               type="submit"
               onClick={() => handleSubmit}
-              disabled={!isValid}
             >
               Add
             </Button>
