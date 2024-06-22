@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -18,12 +18,8 @@ import { useEvent, useSettings, useTimer } from '@/store';
 import { Card } from './ui';
 import { Counter, Completed, EventEditButtons } from './EventTypes';
 
-const defaultWidth = 510;
-
 const EventTypesContainer = () => {
-  const tableRef = useRef<HTMLTableElement>(null);
   const [isEditMode, setIsEditMode] = useState(true);
-  const [tableWidth, setTableWidth] = useState<number>();
   const { eventTypes, reorderEventTypes } = useEvent();
   const { isActive, isPaused } = useTimer();
   const { cardColor } = useSettings();
@@ -54,30 +50,6 @@ const EventTypesContainer = () => {
     }
   }, [isActive, isPaused]);
 
-  useEffect(
-    () => {
-      let interval: NodeJS.Timeout | undefined = undefined;
-
-      if (eventTypes.length === 0) {
-        setTableWidth(defaultWidth);
-        return;
-      }
-
-      if (!isActive || isPaused || !tableRef.current?.clientWidth) {
-        interval = setInterval(() => {
-          if (tableRef.current?.clientWidth !== tableWidth) {
-            setTableWidth(tableRef.current?.clientWidth);
-          }
-        }, 10);
-      } else {
-        clearInterval(interval);
-      }
-
-      return () => clearInterval(interval);
-    },
-    [eventTypes, isActive, isPaused, tableRef.current?.clientWidth]
-  );
-
   return (
     <Card
       className="mx-auto max-w-2xl p-12 my-4"
@@ -95,7 +67,7 @@ const EventTypesContainer = () => {
             items={eventTypes}
             strategy={verticalListSortingStrategy}
           >
-            <table ref={tableRef} className="mx-auto table-auto w-auto border-separate border-spacing-x-0 border-spacing-y-2">
+            <table className="mx-auto table-auto w-auto border-separate border-spacing-x-0 border-spacing-y-2">
               <tbody>
                 {eventTypes.map((event) =>
                   event.type === 'counter' ? (
@@ -117,14 +89,15 @@ const EventTypesContainer = () => {
                     )
                   )
                 )}
+                {(!isActive || isPaused) && (
+                  <tr>
+                    <td colSpan={isEditMode ? 4 : 2}>
+                      <EventEditButtons toggleEditMode={toggleEditMode} />
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
-            {(!isActive || isPaused) && (
-              <EventEditButtons
-                width={`${tableWidth ?? defaultWidth}px`}
-                toggleEditMode={toggleEditMode}
-              />
-            )}
           </SortableContext>
         </DndContext>
       </div>

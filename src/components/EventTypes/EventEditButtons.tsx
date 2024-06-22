@@ -3,12 +3,11 @@ import { Button } from '@/components/ui';
 import AddEventType from './AddEventType';
 
 type Props = {
-  width?: string;
   toggleEditMode: () => void;
 };
 
-const EventEditButtons = ({ width = '30rem', toggleEditMode }: Props) => (
-  <div className="flex gap-2 mx-auto" style={{ width }}>
+const EventEditButtons = ({ toggleEditMode }: Props) => (
+  <div className="flex gap-2 mx-auto">
     <div className="text-center border-2 rounded-lg border-dashed w-1/2">
       <AddEventType />
     </div>
