@@ -90,11 +90,10 @@ const EventTypesContainer = () => {
                   )
                 )}
                 {(!isActive || isPaused) && (
-                  <tr>
-                    <td colSpan={isEditMode ? 4 : 2}>
-                      <EventEditButtons toggleEditMode={toggleEditMode} />
-                    </td>
-                  </tr>
+                  <EventEditButtons
+                    isEditMode={isEditMode}
+                    toggleEditMode={toggleEditMode}
+                  />
                 )}
               </tbody>
             </table>
