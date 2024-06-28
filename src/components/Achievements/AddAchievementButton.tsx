@@ -5,7 +5,7 @@ import { MdAdd } from 'react-icons/md';
 import { GoAlert } from 'react-icons/go';
 import { boolean, mixed, number, object, string } from 'yup';
 
-import { AchievementType } from '@/types';
+import type { AchievementType } from '@/types';
 import { useAchievement } from '@/store';
 
 import Completed from './Completed';
