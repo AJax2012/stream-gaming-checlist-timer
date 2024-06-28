@@ -17,7 +17,6 @@ type FireworksProviderType = {
   fireworksHidden: boolean;
   fireworksRef: RefObject<FireworksHandlers & HTMLDivElement>;
   hideFireworks: () => void;
-  showFireworks: () => void;
 };
 
 type Props = {
@@ -38,24 +37,11 @@ export const FireworksProvider = ({ children }: Props) => {
   );
 
   const [
-    completedFireworksAchievementsCount,
-    setCompletedFireworksAchievementsCount,
-  ] = useState(0);
-
-  const showFireworks = useCallback(() => {
-    if (fireworksRef.current) {
-      fireworksRef.current?.start();
-      setFireworksHidden(false);
-    }
-  }, []);
-
-  const hideFireworks = useCallback(() => {
-    if (fireworksRef.current) {
-      fireworksRef.current?.stop();
-      fireworksRef.current?.clear();
-      setFireworksHidden(true);
-    }
-  }, []);
+    celebratedAchievementsCount,
+    setCelebratedAchievementsCount,
+  ] = useState(
+    getItemFromLocalStorageOrDefault('celebratedAchievementsCount', 0)
+  );
 
   const isAchievementCompleted = useCallback(
     (achievement: Achievement, events: ChecklistEvent[]) => {
@@ -76,46 +62,73 @@ export const FireworksProvider = ({ children }: Props) => {
     []
   );
 
-  useEffect(() => {
-    const completedCelebrationAchievements =
+  const getCompletedCelebrationAchievementsCount = useCallback(
+    (achievements: Achievement[], events: ChecklistEvent[]) =>
       achievements.filter((achievement) =>
         isAchievementCompleted(achievement, events)
-      )?.length || 0;
+      ).length,
+    [isAchievementCompleted]
+  );
 
-    if (completedCelebrationAchievements === 0) {
-      setCompletedFireworksAchievementsCount(0);
-      return;
+  const showFireworks = useCallback(() => {
+    setFireworksHidden(false);
+    if (fireworksRef.current) {
+      fireworksRef.current?.start();
     }
+  }, []);
+
+  const hideFireworksCallback = useCallback(
+    (achievements: Achievement[], events: ChecklistEvent[]) => {
+      setFireworksHidden(true);
+      setCelebratedAchievementsCount(
+        getCompletedCelebrationAchievementsCount(achievements, events)
+      );
+
+      if (fireworksRef.current) {
+        fireworksRef.current?.stop();
+        fireworksRef.current?.clear();
+      }
+    },
+    [getCompletedCelebrationAchievementsCount]
+  );
+
+  const hideFireworks = () => {
+    hideFireworksCallback(achievements, events);
+  };
+
+  useEffect(() => {
+    const completedCelebrationAchievements =
+      getCompletedCelebrationAchievementsCount(achievements, events);
 
     if (
-      !fireworksHidden &&
-      completedCelebrationAchievements !== completedFireworksAchievementsCount
+      completedCelebrationAchievements > 0 &&
+      completedCelebrationAchievements > celebratedAchievementsCount
     ) {
       showFireworks();
     } else {
-      hideFireworks();
+      hideFireworksCallback(achievements, events);
     }
-
-    setCompletedFireworksAchievementsCount(completedCelebrationAchievements);
   }, [
     achievements,
-    completedFireworksAchievementsCount,
+    celebratedAchievementsCount,
+    getCompletedCelebrationAchievementsCount,
     events,
-    fireworksHidden,
-    hideFireworks,
-    isAchievementCompleted,
+    hideFireworksCallback,
     showFireworks,
   ]);
 
   useEffect(() => {
     localStorage.setItem('fireworksHidden', String(fireworksHidden));
-  }, [fireworksHidden]);
+    localStorage.setItem(
+      'celebratedAchievementsCount',
+      String(celebratedAchievementsCount)
+    );
+  }, [fireworksHidden, celebratedAchievementsCount]);
 
   const fireworksState = {
     fireworksHidden,
     fireworksRef,
     hideFireworks,
-    showFireworks,
   };
 
   return (
