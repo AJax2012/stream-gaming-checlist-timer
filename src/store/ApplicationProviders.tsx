@@ -10,9 +10,9 @@ type Props = {
 const ApplicationProviders = ({ children }: Props) => (
   <SettingsProvider>
     <TimerProvider>
-      <AchievementProvider>
-        <EventProvider>{children}</EventProvider>
-      </AchievementProvider>
+      <EventProvider>
+        <AchievementProvider>{children}</AchievementProvider>
+      </EventProvider>
     </TimerProvider>
   </SettingsProvider>
 );
