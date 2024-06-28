@@ -15,7 +15,7 @@ const Home = (): JSX.Element => {
         ref={fireworksRef}
         options={{ autoresize: true }}
         onClick={hideFireworks}
-        className={cn("fireworks", { hidden: fireworksHidden })}
+        className={cn('fireworks', { hidden: fireworksHidden })}
       />
     </section>
   );

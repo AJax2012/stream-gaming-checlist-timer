@@ -18,7 +18,7 @@ import {
   Input,
   Label,
 } from '@/components/ui';
-import { EventTypeOption } from '@/types';
+import type { EventTypeOption } from '@/types';
 import { useEvent } from '@/store';
 
 import Completed from './Completed';
@@ -28,61 +28,56 @@ const AddEventType = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { addEventType, eventTypes } = useEvent();
 
-  const {
-    handleSubmit,
-    values,
-    handleChange,
-    handleReset,
-    errors,
-    touched,
-  } = useFormik({
-    initialValues: {
-      label: '',
-      celebrateOnCompleted: false,
-      type: 'completed',
-      max: 0,
-    },
-    validationSchema: object({
-      label: string().required('Required'),
-      celebrateOnCompleted: boolean().required('Required'),
-      type: mixed()
-        .oneOf(['counter', 'completed'])
-        .required('Required'),
-      max: number().test({
-        name: 'max',
-        message: 'Max must be greater than 0 when celebrating for a counter',
-        test: (max, { parent }) => {
-          if (parent.type === 'counter' && parent.celebrateOnCompleted === true) {
-            return !!max && max > 0;
-          }
+  const { handleSubmit, values, handleChange, handleReset, errors, touched } =
+    useFormik({
+      initialValues: {
+        label: '',
+        celebrateOnCompleted: false,
+        type: 'completed',
+        max: 0,
+      },
+      validationSchema: object({
+        label: string().required('Required'),
+        celebrateOnCompleted: boolean().required('Required'),
+        type: mixed().oneOf(['counter', 'completed']).required('Required'),
+        max: number().test({
+          name: 'max',
+          message: 'Max must be greater than 0 when celebrating for a counter',
+          test: (max, { parent }) => {
+            if (
+              parent.type === 'counter' &&
+              parent.celebrateOnCompleted === true
+            ) {
+              return !!max && max > 0;
+            }
 
-          return true;
-        }
+            return true;
+          },
+        }),
       }),
-    }),
-    onSubmit: (
-      { celebrateOnCompleted, type, label, max },
-      { resetForm, setErrors }
-    ) => {
-      if (eventTypes.filter((event) => event.label === label).length > 0) {
-        setErrors({ label: 'Event tracker already exists' });
-        return;
-      }
+      onSubmit: (
+        { celebrateOnCompleted, type, label, max },
+        { resetForm, setErrors }
+      ) => {
+        if (eventTypes.filter((event) => event.label === label).length > 0) {
+          setErrors({ label: 'Event tracker already exists' });
+          return;
+        }
 
-      addEventType({
-        label,
-        type: type as EventTypeOption,
-        max: max > 0 ? max : undefined,
-        celebrateOnCompleted,
-      });
+        addEventType({
+          label,
+          type: type as EventTypeOption,
+          max: max > 0 ? max : undefined,
+          celebrateOnCompleted,
+        });
 
-      resetForm();
-      setIsOpen(false);
-    },
-    onReset: () => {
-      setIsOpen(false);
-    },
-  });
+        resetForm();
+        setIsOpen(false);
+      },
+      onReset: () => {
+        setIsOpen(false);
+      },
+    });
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -148,7 +143,10 @@ const AddEventType = () => {
                 checked={values.celebrateOnCompleted}
                 onClick={() => {
                   handleChange({
-                    target: { name: 'celebrateOnCompleted', value: !values.celebrateOnCompleted },
+                    target: {
+                      name: 'celebrateOnCompleted',
+                      value: !values.celebrateOnCompleted,
+                    },
                   });
                 }}
               />
@@ -203,10 +201,7 @@ const AddEventType = () => {
             <Button type="reset" onClick={handleReset} variant="destructive">
               Cancel
             </Button>
-            <Button
-              type="submit"
-              onClick={() => handleSubmit}
-            >
+            <Button type="submit" onClick={() => handleSubmit}>
               Add
             </Button>
           </DialogFooter>
