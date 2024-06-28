@@ -14,11 +14,11 @@ import {
 
 const ResetTimer = () => {
   const { reset, isActive, isPaused } = useTimer();
-  const { resetEvents } = useEvent();
+  const { handleSetEvents } = useEvent();
 
   const handleReset = () => {
     reset();
-    resetEvents();
+    handleSetEvents();
   };
 
   if (!isActive || !isPaused) {
