@@ -1,7 +1,7 @@
 import cn from 'classnames';
-import { EventList, EventTypeContainer, Header } from '@/components';
-import { useEvent } from '../store';
 import Fireworks from '@fireworks-js/react';
+import { EventList, AchievementsList, Header } from '@/components';
+import { useEvent } from '@/store';
 
 const Home = (): JSX.Element => {
   const { fireworksRef, hideFireworks, fireworksHidden } = useEvent();
@@ -9,13 +9,13 @@ const Home = (): JSX.Element => {
   return (
     <section id="main-content" className="block">
       <Header />
-      <EventTypeContainer />
+      <AchievementsList />
       <EventList />
       <Fireworks
         ref={fireworksRef}
         options={{ autoresize: true }}
         onClick={hideFireworks}
-        className={cn("fireworks", { hidden: fireworksHidden })}
+        className={cn('fireworks', { hidden: fireworksHidden })}
       />
     </section>
   );

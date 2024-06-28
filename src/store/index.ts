@@ -1,5 +1,4 @@
-export * from './EventContext';
-export * from './TimerContext';
-export * from './SettingsContext';
+export { default as ApplicationProviders } from './ApplicationProviders';
 
+export * from './context';
 export * from './utils';

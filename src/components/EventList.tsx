@@ -12,7 +12,7 @@ import {
 } from './ui';
 
 const EventList = () => {
-  const { events, removeEventById } = useEvent();
+  const { events, removeEvent: removeEventById } = useEvent();
   const { timerIntervalInMilliseconds, cardColor } = useSettings();
 
   const format = useMemo(() => {
@@ -39,7 +39,7 @@ const EventList = () => {
         <ListGroup>
           {events.map((event) => (
             <ListGroupItem key={event.id} className="flex justify-between py-2">
-              <span>{event.name}</span>
+              <span>{event.label}</span>
               <span className="flex gap-3">
                 <span>
                   {Duration.fromMillis(event.timestampInMilliseconds).toFormat(

@@ -1,7 +1,7 @@
 type ChecklistEvent = {
   id: string;
-  eventTypeId: string;
-  name: string;
+  achievementId: string;
+  label: string;
   timestampInMilliseconds: number;
 };
 

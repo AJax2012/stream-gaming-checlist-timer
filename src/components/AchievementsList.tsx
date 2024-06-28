@@ -14,13 +14,13 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 
-import { useEvent, useSettings, useTimer } from '@/store';
+import { useAchievement, useSettings, useTimer } from '@/store';
 import { Card } from './ui';
-import { Counter, Completed, EventEditButtons } from './EventTypes';
+import { Counter, Completed, EditAchievementButtons } from './Achievements';
 
-const EventTypesContainer = () => {
+const AchievementsList = () => {
   const [isEditMode, setIsEditMode] = useState(true);
-  const { eventTypes, reorderEventTypes } = useEvent();
+  const { achievements, reorderAchievements } = useAchievement();
   const { isActive, isPaused } = useTimer();
   const { cardColor } = useSettings();
 
@@ -33,10 +33,12 @@ const EventTypesContainer = () => {
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (over?.id && active.id !== over?.id) {
-      const oldIndex = eventTypes.findIndex((event) => event.id === active.id);
-      const newIndex = eventTypes.findIndex((event) => event.id === over.id);
+      const oldIndex = achievements.findIndex(
+        (event) => event.id === active.id
+      );
+      const newIndex = achievements.findIndex((event) => event.id === over.id);
 
-      reorderEventTypes(oldIndex, newIndex);
+      reorderAchievements(oldIndex, newIndex);
     }
   };
 
@@ -64,30 +66,30 @@ const EventTypesContainer = () => {
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={eventTypes}
+            items={achievements}
             strategy={verticalListSortingStrategy}
           >
             <table className="mx-auto table-auto w-auto border-separate border-spacing-x-0 border-spacing-y-2">
               <tbody>
-                {eventTypes.map((event) =>
+                {achievements.map((event) =>
                   event.type === 'counter' ? (
                     <Counter
                       key={event.id}
-                      eventType={event}
+                      achievement={event}
                       isEditMode={isEditMode}
                     />
                   ) : (
                     event.type === 'completed' && (
                       <Completed
                         key={event.id}
-                        eventType={event}
+                        achievement={event}
                         isEditMode={isEditMode}
                       />
                     )
                   )
                 )}
                 {(!isActive || isPaused) && (
-                  <EventEditButtons
+                  <EditAchievementButtons
                     isEditMode={isEditMode}
                     toggleEditMode={toggleEditMode}
                   />
@@ -101,4 +103,4 @@ const EventTypesContainer = () => {
   );
 };
 
-export default EventTypesContainer;
+export default AchievementsList;

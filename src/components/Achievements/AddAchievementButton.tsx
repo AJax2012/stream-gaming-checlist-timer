@@ -5,6 +5,11 @@ import { MdAdd } from 'react-icons/md';
 import { GoAlert } from 'react-icons/go';
 import { boolean, mixed, number, object, string } from 'yup';
 
+import { AchievementType } from '@/types';
+import { useAchievement } from '@/store';
+
+import Completed from './Completed';
+import Counter from './Counter';
 import {
   Button,
   Checkbox,
@@ -17,72 +22,62 @@ import {
   DialogTrigger,
   Input,
   Label,
-} from '@/components/ui';
-import { EventTypeOption } from '@/types';
-import { useEvent } from '@/store';
+} from '../ui';
 
-import Completed from './Completed';
-import Counter from './Counter';
-
-const AddEventType = () => {
+const AddAchievementButton = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { addEventType, eventTypes } = useEvent();
+  const { addAchievement, achievements } = useAchievement();
 
-  const {
-    handleSubmit,
-    values,
-    handleChange,
-    handleReset,
-    errors,
-    touched,
-  } = useFormik({
-    initialValues: {
-      label: '',
-      celebrateOnCompleted: false,
-      type: 'completed',
-      max: 0,
-    },
-    validationSchema: object({
-      label: string().required('Required'),
-      celebrateOnCompleted: boolean().required('Required'),
-      type: mixed()
-        .oneOf(['counter', 'completed'])
-        .required('Required'),
-      max: number().test({
-        name: 'max',
-        message: 'Max must be greater than 0 when celebrating for a counter',
-        test: (max, { parent }) => {
-          if (parent.type === 'counter' && parent.celebrateOnCompleted === true) {
-            return !!max && max > 0;
-          }
+  const { handleSubmit, values, handleChange, handleReset, errors, touched } =
+    useFormik({
+      initialValues: {
+        label: '',
+        celebrateOnCompleted: false,
+        type: 'completed',
+        max: 0,
+      },
+      validationSchema: object({
+        label: string().required('Required'),
+        celebrateOnCompleted: boolean().required('Required'),
+        type: mixed().oneOf(['counter', 'completed']).required('Required'),
+        max: number().test({
+          name: 'max',
+          message: 'Max must be greater than 0 when celebrating for a counter',
+          test: (max, { parent }) => {
+            if (
+              parent.type === 'counter' &&
+              parent.celebrateOnCompleted === true
+            ) {
+              return !!max && max > 0;
+            }
 
-          return true;
-        }
+            return true;
+          },
+        }),
       }),
-    }),
-    onSubmit: (
-      { celebrateOnCompleted, type, label, max },
-      { resetForm, setErrors }
-    ) => {
-      if (eventTypes.filter((event) => event.label === label).length > 0) {
-        setErrors({ label: 'Event tracker already exists' });
-        return;
-      }
+      onSubmit: (
+        { celebrateOnCompleted, type, label, max },
+        { resetForm, setErrors }
+      ) => {
+        if (achievements.filter((event) => event.label === label).length > 0) {
+          setErrors({ label: 'Event tracker already exists' });
+          return;
+        }
 
-      addEventType({
-        label,
-        type: type as EventTypeOption,
-        max: max > 0 ? max : undefined,
-        celebrateOnCompleted,
-      });
+        addAchievement({
+          label,
+          type: type as AchievementType,
+          max: max > 0 ? max : undefined,
+          celebrateOnCompleted,
+        });
 
-      resetForm();
-      setIsOpen(false);
-    },
-    onReset: () => {
-      setIsOpen(false);
-    },
-  });
+        resetForm();
+        setIsOpen(false);
+      },
+      onReset: () => {
+        setIsOpen(false);
+      },
+    });
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -113,19 +108,19 @@ const AddEventType = () => {
             <table className="mx-auto table-auto w-auto border-separate border-spacing-x-0 border-spacing-y-2">
               <tbody>
                 <Completed
-                  eventType={{
+                  achievement={{
                     id: 'add-completed',
                     type: 'completed',
                     label: 'Completed',
                     celebrateOnCompleted: false,
                   }}
                   isRadioOption
-                  optionSelected={values.type as EventTypeOption}
+                  achievementTypeSelected={values.type as AchievementType}
                   onChange={handleChange}
                   isEditMode={false}
                 />
                 <Counter
-                  eventType={{
+                  achievement={{
                     id: 'add-counter',
                     type: 'counter',
                     label: 'Counter',
@@ -133,7 +128,7 @@ const AddEventType = () => {
                     max: 5,
                   }}
                   isRadioOption
-                  optionSelected={values.type as EventTypeOption}
+                  achievementTypeSelected={values.type as AchievementType}
                   onChange={handleChange}
                   isEditMode={false}
                 />
@@ -148,7 +143,10 @@ const AddEventType = () => {
                 checked={values.celebrateOnCompleted}
                 onClick={() => {
                   handleChange({
-                    target: { name: 'celebrateOnCompleted', value: !values.celebrateOnCompleted },
+                    target: {
+                      name: 'celebrateOnCompleted',
+                      value: !values.celebrateOnCompleted,
+                    },
                   });
                 }}
               />
@@ -203,10 +201,7 @@ const AddEventType = () => {
             <Button type="reset" onClick={handleReset} variant="destructive">
               Cancel
             </Button>
-            <Button
-              type="submit"
-              onClick={() => handleSubmit}
-            >
+            <Button type="submit" onClick={() => handleSubmit}>
               Add
             </Button>
           </DialogFooter>
@@ -216,4 +211,4 @@ const AddEventType = () => {
   );
 };
 
-export default AddEventType;
+export default AddAchievementButton;

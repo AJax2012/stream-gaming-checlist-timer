@@ -1,3 +1,4 @@
+import { ChangeEvent } from 'react';
 import { RgbColorPicker, RgbaColorPicker } from 'react-colorful';
 import { MdClose } from 'react-icons/md';
 import {
@@ -15,12 +16,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui';
-import { useEvent, useSettings, useTimer } from '@/store';
+import { useAchievement, useEvent, useSettings, useTimer } from '@/store';
 import { TimerInterval } from '@/types';
-import { ChangeEvent } from 'react';
 
 const Settings = () => {
-  const { events, eventTypes, setAllEvents } = useEvent();
+  const { events, handleSetEvents } = useEvent();
+  const { achievements, handleSetAchievements } = useAchievement();
 
   const {
     backgroundColor,
@@ -65,7 +66,7 @@ const Settings = () => {
       backgroundPicture,
       cardColor,
       events,
-      eventTypes,
+      achievements,
       fontColor,
       eventTitle,
       timerIntervalInMilliseconds,
@@ -95,7 +96,8 @@ const Settings = () => {
       setFontColor(data.fontColor);
       setTimerIntervalInMilliseconds(data.timerIntervalInMilliseconds);
       setTimerPauseColor(data.timerPauseColor);
-      setAllEvents(data.eventTypes, data.events);
+      handleSetAchievements(data.achievements);
+      handleSetEvents(data.events);
       setTimer(data.timeInMilliseconds);
     };
     reader.readAsText(file);
