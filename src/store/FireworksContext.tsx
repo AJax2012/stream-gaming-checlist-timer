@@ -87,6 +87,7 @@ export const FireworksProvider = ({ children }: Props) => {
     setCompletedFireworksAchievements(completedCelebrationAchievements);
   }, [
     achievements,
+    completedFireworksAchievements,
     events,
     fireworksHidden,
     hideFireworks,
