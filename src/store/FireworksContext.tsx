@@ -37,8 +37,7 @@ export const FireworksProvider = ({ children }: Props) => {
     getItemFromLocalStorageOrDefault('fireworksHidden', false)
   );
 
-  const [eventCount, setEventCount] = useState(events.length);
-  const [achievementCount, setAchievementCount] = useState(achievements.length);
+  const [completedFireworksAchievements, setCompletedFireworksAchievements] = useState<Achievement[]>([]);
 
   const showFireworks = useCallback(() => {
     if (fireworksRef.current) {
@@ -79,11 +78,13 @@ export const FireworksProvider = ({ children }: Props) => {
       (achievement) => isAchievementCompleted(achievement, events)
     );
 
-    if (!fireworksHidden && completedCelebrationAchievements?.length > 0) {
+    if (!fireworksHidden && completedCelebrationAchievements?.length !== completedFireworksAchievements.length) {
       showFireworks();
     } else {
       hideFireworks();
     }
+
+    setCompletedFireworksAchievements(completedCelebrationAchievements);
   }, [
     achievements,
     events,
@@ -96,17 +97,6 @@ export const FireworksProvider = ({ children }: Props) => {
   useEffect(() => {
     localStorage.setItem('fireworksHidden', String(fireworksHidden));
   }, [fireworksHidden]);
-
-  useEffect(() => {
-    if (
-      achievements.length !== achievementCount ||
-      events.length !== eventCount
-    ) {
-      setAchievementCount(achievements.length);
-      setEventCount(events.length);
-      setFireworksHidden(false);
-    }
-  }, [achievements.length, events.length, eventCount, achievementCount]);
 
   const fireworksState = {
     fireworksHidden,
