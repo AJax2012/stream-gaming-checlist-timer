@@ -1,6 +1,6 @@
 import cn from 'classnames';
 import Fireworks from '@fireworks-js/react';
-import { EventList, AchievementsList, Header } from '@/components';
+import { AchievementList, EventList, Header } from '@/components';
 import { useEvent } from '@/store';
 
 const Home = (): JSX.Element => {
@@ -9,7 +9,7 @@ const Home = (): JSX.Element => {
   return (
     <section id="main-content" className="block">
       <Header />
-      <AchievementsList />
+      <AchievementList />
       <EventList />
       <Fireworks
         ref={fireworksRef}
