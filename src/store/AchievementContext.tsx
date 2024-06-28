@@ -1,8 +1,8 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
 import { v4 as uuid } from 'uuid';
 
-import { Achievement, CreateAchievement } from '@/types';
+import type { Achievement, CreateAchievement } from '@/types';
 import { demoAchievements } from './constants';
 import { useEvent } from './context';
 import { getItemFromLocalStorageOrDefault } from './utils';
@@ -68,6 +68,10 @@ export const AchievementProvider = ({ children }: Props) => {
     const sortedEvents = arrayMove(achievements, oldIndex, newIndex);
     setAchievements([...sortedEvents]);
   };
+
+  useEffect(() => {
+    localStorage.setItem('achievements', JSON.stringify(achievements));
+  }, [achievements]);
 
   const achievementState = {
     achievements,

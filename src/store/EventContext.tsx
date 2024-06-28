@@ -1,7 +1,14 @@
-import { createContext, useState, useEffect, useRef, RefObject } from 'react';
+import {
+  createContext,
+  useState,
+  useEffect,
+  useRef,
+  type RefObject,
+  useCallback,
+} from 'react';
 import type { FireworksHandlers } from '@fireworks-js/react';
 import { v4 as uuid } from 'uuid';
-import { Achievement, ChecklistEvent } from '@/types';
+import type { Achievement, ChecklistEvent } from '@/types';
 import { useTimer } from './context';
 import { getItemFromLocalStorageOrDefault } from './utils';
 
@@ -81,19 +88,19 @@ export const EventProvider = ({ children }: Props) => {
   };
 
   /* Fireworks */
-  const hideFireworks = () => {
+  const hideFireworks = useCallback(() => {
     if (fireworksRef.current) {
       fireworksRef.current?.stop();
       fireworksRef.current?.clear();
       setFireworksHidden(true);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (fireworksRef?.current && timeInMilliseconds === 0) {
       hideFireworks();
     }
-  }, [fireworksRef?.current, timeInMilliseconds]);
+  }, [timeInMilliseconds, hideFireworks]);
 
   useEffect(() => {
     localStorage.setItem('events', JSON.stringify(events));
