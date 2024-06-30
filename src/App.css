@@ -24,3 +24,8 @@ body {
 .fireworks.hidden {
   z-index: -1;
 }
+
+.react-colorful {
+  width: 100%;
+  aspect-ratio: 1/1;
+}

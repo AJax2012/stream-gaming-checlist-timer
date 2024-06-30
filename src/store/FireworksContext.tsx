@@ -36,12 +36,10 @@ export const FireworksProvider = ({ children }: Props) => {
     getItemFromLocalStorageOrDefault('fireworksHidden', false)
   );
 
-  const [
-    celebratedAchievementsCount,
-    setCelebratedAchievementsCount,
-  ] = useState(
-    getItemFromLocalStorageOrDefault('celebratedAchievementsCount', 0)
-  );
+  const [celebratedAchievementsCount, setCelebratedAchievementsCount] =
+    useState(
+      getItemFromLocalStorageOrDefault('celebratedAchievementsCount', 0)
+    );
 
   const isAchievementCompleted = useCallback(
     (achievement: Achievement, events: ChecklistEvent[]) => {

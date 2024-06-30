@@ -98,7 +98,7 @@ const Completed = ({
           variant="outline"
           disabled={!isActive || isPaused}
         >
-          {isCompleted ? <FaCheck color='green' /> : <MdClose color='red' />}
+          {isCompleted ? <FaCheck color="green" /> : <MdClose color="red" />}
         </Button>
       </td>
       {isEditMode && (

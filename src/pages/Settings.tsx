@@ -1,4 +1,5 @@
 import { ChangeEvent } from 'react';
+import { colord } from 'colord';
 import { RgbColorPicker, RgbaColorPicker } from 'react-colorful';
 import { MdClose } from 'react-icons/md';
 import {
@@ -18,6 +19,7 @@ import {
 } from '@/components/ui';
 import { useAchievement, useEvent, useSettings, useTimer } from '@/store';
 import { TimerInterval } from '@/types';
+import { ColorPicker } from '../components';
 
 const Settings = () => {
   const { events, handleSetEvents } = useEvent();
@@ -199,42 +201,30 @@ const Settings = () => {
                   Reset Background Picture
                 </Button>
               </div>
-              <div className="mb-4">
-                <Label htmlFor="backgroundColor">Background Color</Label>
-                <RgbaColorPicker
-                  id="backgroundColor"
-                  className="mt-1"
-                  color={backgroundColor}
-                  onChange={setBackgroundColor}
-                />
-              </div>
-              <div className="mb-4">
-                <Label htmlFor="cardColor">Card Color</Label>
-                <RgbaColorPicker
-                  id="cardColor"
-                  className="mt-1"
-                  color={cardColor}
-                  onChange={setCardColor}
-                />
-              </div>
-              <div className="mb-4">
-                <Label htmlFor="fontColor">Text Color</Label>
-                <RgbColorPicker
-                  id="fontColor"
-                  className="mt-1"
-                  color={fontColor}
-                  onChange={setFontColor}
-                />
-              </div>
-              <div className="mb-4">
-                <Label htmlFor="timerPauseColor">Timer Pause Color</Label>
-                <RgbColorPicker
-                  id="timerPauseColor"
-                  className="mt-1"
-                  color={timerPauseColor}
-                  onChange={setTimerPauseColor}
-                />
-              </div>
+              <ColorPicker
+                color={colord(backgroundColor).toRgbString()}
+                id="backgroundColor"
+                label="Background Color"
+                setColor={setBackgroundColor}
+              />
+              <ColorPicker
+                color={colord(cardColor).toRgbString()}
+                id="cardColor"
+                label="Card Color"
+                setColor={setCardColor}
+              />
+              <ColorPicker
+                color={colord(fontColor).toRgbString()}
+                id="fontColor"
+                label="Text Color"
+                setColor={setFontColor}
+              />
+              <ColorPicker
+                color={colord(timerPauseColor).toRgbString()}
+                id="timerPauseColor"
+                label="Timer Pause Color"
+                setColor={setTimerPauseColor}
+              />
               <Button onClick={resetCustomizations}>
                 Reset Customizations
               </Button>
