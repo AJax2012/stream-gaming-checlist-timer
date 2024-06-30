@@ -118,7 +118,7 @@ const Settings = () => {
         </CardHeader>
         <CardContent>
           <div className="flex justify-center text-left">
-            <div className="w-1/2">
+            <div className="w-2/3">
               <form onSubmit={(e) => e.preventDefault()}>
                 <div className="grid w-full max-w-sm items-center gap-1.5 mb-4">
                   <Label htmlFor="fileUpload">Upload Settings File</Label>
@@ -188,7 +188,7 @@ const Settings = () => {
         </CardHeader>
         <CardContent>
           <div className="flex justify-center text-left">
-            <div className="w-1/2">
+            <div className="w-2/3">
               <div className="grid w-full max-w-sm items-center gap-1.5 mb-4">
                 <Label htmlFor="backgroundPicture">Background Picture</Label>
                 <Input
@@ -202,12 +202,14 @@ const Settings = () => {
                 </Button>
               </div>
               <ColorPicker
+                isRgba
                 color={colord(backgroundColor).toRgbString()}
                 id="backgroundColor"
                 label="Background Color"
                 setColor={setBackgroundColor}
               />
               <ColorPicker
+                isRgba
                 color={colord(cardColor).toRgbString()}
                 id="cardColor"
                 label="Card Color"
