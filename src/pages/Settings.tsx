@@ -1,6 +1,5 @@
 import { ChangeEvent } from 'react';
 import { colord } from 'colord';
-import { RgbColorPicker, RgbaColorPicker } from 'react-colorful';
 import { MdClose } from 'react-icons/md';
 import {
   Button,
