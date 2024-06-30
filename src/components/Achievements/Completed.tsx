@@ -5,48 +5,50 @@ import { CSS } from '@dnd-kit/utilities';
 import { FaCheck, FaTrashAlt } from 'react-icons/fa';
 import { MdClose, MdDragIndicator } from 'react-icons/md';
 
-import { Button, Label } from '@/components/ui';
-import { useEvent, useTimer } from '@/store';
-import { EventType, EventTypeOption } from '@/types';
+import { useAchievement, useEvent, useTimer } from '@/store';
+import { Achievement, AchievementType } from '@/types';
+import { Button, Label } from '../ui';
 
 type Props = {
-  eventType: EventType;
-  optionSelected?: EventTypeOption;
+  achievement: Achievement;
+  achievementTypeSelected?: AchievementType;
   isEditMode: boolean;
   isRadioOption?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
 const Completed = ({
-  eventType,
-  optionSelected,
+  achievement,
+  achievementTypeSelected,
   isEditMode,
   isRadioOption = false,
   onChange,
 }: Props) => {
-  const { id, label } = eventType;
-  const { addEvent, events, removeEventById, removeEventType } = useEvent();
+  const { id, label } = achievement;
+
+  const { removeAchievement } = useAchievement();
+  const { addEvent, events, removeEvent: removeEvent } = useEvent();
   const { isActive, isPaused } = useTimer();
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
   const isCompleted = useMemo(() => {
-    return events.filter((event) => event.eventTypeId === id).length > 0;
+    return events.filter((event) => event.achievementId === id).length > 0;
   }, [events, label]);
 
   const addCompleted = () => {
-    addEvent(eventType);
+    addEvent(achievement);
   };
 
   const removeCompleted = () => {
     const eventToDelete = events
-      .filter((event) => event.eventTypeId === id)
+      .filter((event) => event.achievementId === id)
       .pop();
-    removeEventById(eventToDelete?.id as string);
+    removeEvent(eventToDelete?.id as string);
   };
 
-  const handleRemoveEventType = () => {
-    removeEventType(id);
+  const handleRemoveAchievement = () => {
+    removeAchievement(id);
   };
 
   const toggleCompleted = () => {
@@ -72,7 +74,7 @@ const Completed = ({
             value="completed"
             name="type"
             className="h-4 w-4 cursor-pointer"
-            checked={optionSelected === 'completed'}
+            checked={achievementTypeSelected === 'completed'}
             onChange={onChange}
           />
         </td>
@@ -101,7 +103,7 @@ const Completed = ({
       </td>
       {isEditMode && (
         <td className="border-y-2 p-4">
-          <Button onClick={handleRemoveEventType} variant="outline">
+          <Button onClick={handleRemoveAchievement} variant="outline">
             <FaTrashAlt className="cursor-pointer" />
           </Button>
         </td>

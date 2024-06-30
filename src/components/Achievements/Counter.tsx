@@ -5,34 +5,35 @@ import { CSS } from '@dnd-kit/utilities';
 import { FaTrashAlt } from 'react-icons/fa';
 import { MdDragIndicator } from 'react-icons/md';
 
-import { Button, Input, Label } from '@/components/ui';
-import { useEvent, useTimer } from '@/store';
-import { EventType, EventTypeOption } from '@/types';
+import { useAchievement, useEvent, useTimer } from '@/store';
+import { Achievement, AchievementType } from '@/types';
+import { Button, Input, Label } from '../ui';
 
 type Props = {
-  eventType: EventType;
-  optionSelected?: EventTypeOption;
+  achievement: Achievement;
+  achievementTypeSelected?: AchievementType;
   isEditMode: boolean;
   isRadioOption?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
 const Counter = ({
-  eventType,
-  optionSelected,
+  achievement,
+  achievementTypeSelected,
   isEditMode,
   isRadioOption = false,
   onChange,
 }: Props) => {
-  const { id, label, max } = eventType;
+  const { id, label, max } = achievement;
 
-  const { addEvent, events, removeEventById, removeEventType } = useEvent();
+  const { removeAchievement } = useAchievement();
+  const { addEvent, events, removeEvent } = useEvent();
   const { isActive, isPaused } = useTimer();
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
   const count = useMemo(() => {
-    return events.filter((event) => event.eventTypeId === id).length;
+    return events.filter((event) => event.achievementId === id).length;
   }, [events, label]);
 
   const canIncrement = useMemo(() => !max || count < max, [count, max]);
@@ -41,21 +42,21 @@ const Counter = ({
 
   const increment = () => {
     if (canIncrement) {
-      addEvent(eventType);
+      addEvent(achievement);
     }
   };
 
   const decrement = () => {
     if (count > 0) {
       const eventToDelete = events
-        .filter((event) => event.eventTypeId === id)
+        .filter((event) => event.achievementId === id)
         .pop();
-      removeEventById(eventToDelete?.id as string);
+      removeEvent(eventToDelete?.id as string);
     }
   };
 
-  const handleRemoveEventType = () => {
-    removeEventType(id);
+  const handleRemoveAchievement = () => {
+    removeAchievement(id);
   };
 
   const style = {
@@ -73,7 +74,7 @@ const Counter = ({
             value="counter"
             name="type"
             className="h-4 w-4 cursor-pointer"
-            checked={optionSelected === 'counter'}
+            checked={achievementTypeSelected === 'counter'}
             onChange={onChange}
           />
         </td>
@@ -118,7 +119,7 @@ const Counter = ({
       </td>
       {isEditMode && (
         <td className="border-y-2 p-4">
-          <Button onClick={handleRemoveEventType} variant="outline">
+          <Button onClick={handleRemoveAchievement} variant="outline">
             <FaTrashAlt className="cursor-pointer" />
           </Button>
         </td>

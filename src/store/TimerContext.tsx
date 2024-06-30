@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
-import { useSettings } from './utils/useSettings';
+import { useSettings } from './context';
 import { getItemFromLocalStorageOrDefault } from './utils';
 
 type TimerProviderType = {

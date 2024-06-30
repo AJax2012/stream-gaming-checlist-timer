@@ -1,4 +1,6 @@
 import { useContext } from 'react';
 import { SettingsContext } from '../SettingsContext';
 
-export const useSettings = () => useContext(SettingsContext);
+const useSettings = () => useContext(SettingsContext);
+
+export default useSettings;
