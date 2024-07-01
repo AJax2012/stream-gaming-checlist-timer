@@ -230,7 +230,7 @@ const Settings = () => {
                 }
               >
                 <Label htmlFor="buttonVariant" className="text-xl">
-                  Button Color
+                  Completed Button Type
                 </Label>
                 <div className="flex gap-6 mt-2">
                   <div className="flex gap-3 items-center">
