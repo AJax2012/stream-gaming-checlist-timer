@@ -1,6 +1,8 @@
-import { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { colord } from 'colord';
-import { RgbaStringColorPicker, RgbaColor } from 'react-colorful';
+import { useFormik } from 'formik';
+import noop from 'lodash/noop';
+import { RgbaColor, RgbaStringColorPicker } from 'react-colorful';
 import { useDebouncedCallback } from 'use-debounce';
 import { Input, Label } from './ui';
 
@@ -13,33 +15,60 @@ type Props = {
 };
 
 const ColorPicker = ({ color, id, isRgba = false, label, setColor }: Props) => {
-  const hexColor = useMemo(
-    () => colord(color).toHex().replace('#', ''),
-    [color]
-  );
-  const rgbaColor = useMemo(() => {
+  const getHexInput = (color: string) => {
+    const { r, g, b } = colord(color).toRgb();
+    const hex = colord({ r, g, b }).toHex().replace('#', '');
+    return hex;
+  };
+
+  const getRgbaInput = (color: string) => {
     let rgb = colord(color)
       .toRgbString()
       .replace(/rgba?\(/g, '')
       .replace(')', '');
+
     if (isRgba && rgb.split(',').length === 3) {
       rgb += ', 1';
     }
 
     return rgb;
-  }, [color]);
+  };
 
-  const setColorFromHex = useDebouncedCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setColor(colord(`#${e.target.value}`).toRgb());
+  const hexColor = useMemo(() => getHexInput(color), [color]);
+  const rgbaColor = useMemo(() => getRgbaInput(color), [color]);
+
+  const { setFieldValue, values } = useFormik({
+    initialValues: {
+      hexColor,
+      rgbaColor,
     },
-    500
-  );
+    onSubmit: noop,
+    enableReinitialize: false,
+  });
 
-  const setRgbaColor = useDebouncedCallback((color: string) => {
+  useEffect(() => {
+    setFieldValue('hexColor', hexColor);
+    setFieldValue('rgbaColor', rgbaColor);
+  }, [hexColor, rgbaColor]);
+
+  const debounce = useDebouncedCallback((color: string) => {
+    setColor(colord(color).toRgb());
+  }, 1000);
+
+  const setColorFromPicker = (color: string) => {
+    setColor(colord(color).toRgb());
+  };
+
+  const setColorFromHex = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFieldValue('hexColor', e.target.value);
+    debounce(`#${e.target.value}`);
+  };
+
+  const setColorFromRgba = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFieldValue('rgbaColor', e.target.value);
     const prefix = isRgba ? 'rgba(' : 'rgb(';
-    setColor(colord(`${prefix}${color})`).toRgb());
-  }, 500);
+    debounce(`${prefix}${e.target.value})`);
+  };
 
   return (
     <div className="mb-8">
@@ -49,7 +78,7 @@ const ColorPicker = ({ color, id, isRgba = false, label, setColor }: Props) => {
       <RgbaStringColorPicker
         id={id}
         color={color}
-        onChange={(color) => setColor(colord(color).toRgb())}
+        onChange={setColorFromPicker}
         className="my-2"
       />
       <div className="flex gap-2 relative">
@@ -58,7 +87,9 @@ const ColorPicker = ({ color, id, isRgba = false, label, setColor }: Props) => {
             #
           </span>
           <Input
-            defaultValue={hexColor}
+            id={`${id}Hex`}
+            name="hexColor"
+            value={values.hexColor}
             onChange={setColorFromHex}
             className="pl-6"
           />
@@ -68,8 +99,10 @@ const ColorPicker = ({ color, id, isRgba = false, label, setColor }: Props) => {
             {isRgba ? 'rgba' : 'rgb'}
           </span>
           <Input
-            defaultValue={rgbaColor}
-            onChange={(e) => setRgbaColor(e.target.value)}
+            id={`${id}Rgba`}
+            name="rgbaColor"
+            value={values.rgbaColor}
+            onChange={setColorFromRgba}
             className="pl-12"
           />
         </div>
