@@ -5,7 +5,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { FaCheck, FaTrashAlt } from 'react-icons/fa';
 import { MdClose, MdDragIndicator } from 'react-icons/md';
 
-import { useAchievement, useEvent, useTimer } from '@/store';
+import { useAchievement, useEvent, useSettings, useTimer } from '@/store';
 import { Achievement, AchievementType } from '@/types';
 import { Button, Label } from '../ui';
 
@@ -28,6 +28,7 @@ const Completed = ({
 
   const { removeAchievement } = useAchievement();
   const { addEvent, events, removeEvent: removeEvent } = useEvent();
+  const { completedButtonVariant } = useSettings();
   const { isActive, isPaused } = useTimer();
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
@@ -35,6 +36,17 @@ const Completed = ({
   const isCompleted = useMemo(() => {
     return events.filter((event) => event.achievementId === id).length > 0;
   }, [events, label]);
+
+  const buttonVariant = useMemo(() => {
+    if (completedButtonVariant === 'outline') {
+      return 'outline';
+    }
+
+    return isCompleted ? 'green' : 'destructive';
+  }, [completedButtonVariant, isCompleted]);
+
+  const getButtonIconColor = (outlineColor: string) =>
+    completedButtonVariant === 'outline' ? outlineColor : 'white';
 
   const addCompleted = () => {
     addEvent(achievement);
@@ -95,10 +107,14 @@ const Completed = ({
       >
         <Button
           onClick={toggleCompleted}
-          variant="outline"
+          variant={buttonVariant}
           disabled={!isActive || isPaused}
         >
-          {isCompleted ? <FaCheck color="green" /> : <MdClose color="red" />}
+          {isCompleted ? (
+            <FaCheck color={getButtonIconColor('green')} />
+          ) : (
+            <MdClose color={getButtonIconColor('red')} />
+          )}
         </Button>
       </td>
       {isEditMode && (

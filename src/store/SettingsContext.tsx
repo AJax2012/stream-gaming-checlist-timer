@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
-import { TimerInterval } from '@/types';
+import { CompletedButtonVariant, TimerInterval } from '@/types';
 import { RgbColor, RgbaColor } from 'react-colorful';
 import { getItemFromLocalStorageOrDefault } from './utils';
 
@@ -8,6 +8,7 @@ const defaultTimerInterval: TimerInterval = 1000;
 type SettingsProviderType = {
   backgroundColor: RgbaColor;
   backgroundPicture: string;
+  completedButtonVariant: CompletedButtonVariant;
   cardColor: RgbaColor;
   eventTitle: string;
   fontColor: RgbColor;
@@ -16,6 +17,9 @@ type SettingsProviderType = {
   setBackgroundColor: (backgroundColor: RgbaColor) => void;
   setBackgroundPicture: (backgroundPicture: string) => void;
   setCardColor: (cardColor: RgbaColor) => void;
+  setCompletedButtonVariant: (
+    completedButtonVariant: CompletedButtonVariant
+  ) => void;
   setEventTitle: (eventTitle: string) => void;
   setFontColor: (fontColor: RgbColor) => void;
   setTimerIntervalInMilliseconds: (timerInterval: TimerInterval) => void;
@@ -67,6 +71,11 @@ export const SettingsProvider = ({ children }: Props): JSX.Element => {
     })
   );
 
+  const [completedButtonVariant, setCompletedButtonVariant] =
+    useState<CompletedButtonVariant>(
+      getItemFromLocalStorageOrDefault('completedButtonVariant', 'outline')
+    );
+
   const [timerPauseColor, setTimerPauseColor] = useState<RgbColor>(
     getItemFromLocalStorageOrDefault('timerPauseColor', {
       r: 239,
@@ -95,12 +104,17 @@ export const SettingsProvider = ({ children }: Props): JSX.Element => {
     localStorage.setItem('backgroundPicture', backgroundPicture);
     localStorage.setItem('backgroundColor', JSON.stringify(backgroundColor));
     localStorage.setItem('cardColor', JSON.stringify(cardColor));
+    localStorage.setItem(
+      'completedButtonVariant',
+      JSON.stringify(completedButtonVariant)
+    );
     localStorage.setItem('fontColor', JSON.stringify(fontColor));
     localStorage.setItem('timerPauseColor', JSON.stringify(timerPauseColor));
   }, [
     backgroundPicture,
     backgroundColor,
     cardColor,
+    completedButtonVariant,
     fontColor,
     timerPauseColor,
   ]);
@@ -122,6 +136,7 @@ export const SettingsProvider = ({ children }: Props): JSX.Element => {
     setBackgroundPicture('');
     setBackgroundColor({ r: 248, g: 250, b: 252, a: 1 });
     setCardColor({ r: 255, g: 255, b: 255, a: 0.5 });
+    setCompletedButtonVariant('outline');
     setFontColor({ r: 0, g: 0, b: 0 });
     setTimerPauseColor({ r: 239, g: 68, b: 68 });
   };
@@ -130,6 +145,7 @@ export const SettingsProvider = ({ children }: Props): JSX.Element => {
     backgroundColor,
     backgroundPicture,
     cardColor,
+    completedButtonVariant,
     eventTitle,
     fontColor,
     timerIntervalInMilliseconds,
@@ -137,6 +153,7 @@ export const SettingsProvider = ({ children }: Props): JSX.Element => {
     setBackgroundColor,
     setBackgroundPicture,
     setCardColor,
+    setCompletedButtonVariant,
     setEventTitle,
     setFontColor,
     setTimerIntervalInMilliseconds,
