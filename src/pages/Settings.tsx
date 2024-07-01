@@ -223,7 +223,7 @@ const Settings = () => {
               </div>
               <RadioGroup
                 name="buttonVariant"
-                defaultValue="filled"
+                defaultValue="outline"
                 className="mb-8"
                 onValueChange={(value: CompletedButtonVariant) =>
                   setCompletedButtonVariant(value)
@@ -233,6 +233,22 @@ const Settings = () => {
                   Completed Button Type
                 </Label>
                 <div className="flex gap-6 mt-2">
+                  <div className="flex gap-3 items-center">
+                    <RadioGroupItem
+                      id="buttonVariantOutlined"
+                      value="outline"
+                      defaultChecked
+                      checked={completedButtonVariant === 'outline'}
+                    />
+                    <Label>
+                      <Button
+                        variant="outline"
+                        onClick={() => setCompletedButtonVariant('outline')}
+                      >
+                        <FaCheck color="green" />
+                      </Button>
+                    </Label>
+                  </div>
                   <div className="flex gap-3 items-center">
                     <RadioGroupItem
                       id="buttonVariantFilled"
@@ -245,21 +261,6 @@ const Settings = () => {
                         onClick={() => setCompletedButtonVariant('filled')}
                       >
                         <FaCheck color="white" />
-                      </Button>
-                    </Label>
-                  </div>
-                  <div className="flex gap-3 items-center">
-                    <RadioGroupItem
-                      id="buttonVariantOutlined"
-                      value="outline"
-                      checked={completedButtonVariant === 'outline'}
-                    />
-                    <Label>
-                      <Button
-                        variant="outline"
-                        onClick={() => setCompletedButtonVariant('outline')}
-                      >
-                        <FaCheck color="green" />
                       </Button>
                     </Label>
                   </div>
