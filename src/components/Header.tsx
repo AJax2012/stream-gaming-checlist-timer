@@ -1,6 +1,7 @@
 import { useSettings } from '@/store';
 import { Card, CardContent, CardTitle } from './ui';
 import Timer from './Timer';
+import { colord } from 'colord';
 
 const Header = () => {
   const { cardColor, eventTitle } = useSettings();
@@ -9,7 +10,7 @@ const Header = () => {
     <Card
       className="mx-auto max-w-2xl my-4"
       style={{
-        backgroundColor: `rgba(${cardColor.r}, ${cardColor.g}, ${cardColor.b}, ${cardColor.a})`,
+        backgroundColor: colord(cardColor).toRgbString(),
       }}
     >
       <CardTitle className="text-3xl my-5">{eventTitle}</CardTitle>

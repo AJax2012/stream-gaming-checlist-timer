@@ -17,6 +17,7 @@ import {
 import { useAchievement, useSettings, useTimer } from '@/store';
 import { Card, CardContent, CardHeader, CardTitle } from './ui';
 import { Counter, Completed, EditAchievementButtons } from './Achievements';
+import { colord } from 'colord';
 
 const AchievementList = () => {
   const [isEditMode, setIsEditMode] = useState(true);
@@ -56,7 +57,7 @@ const AchievementList = () => {
     <Card
       className="mx-auto max-w-2xl"
       style={{
-        backgroundColor: `rgba(${cardColor.r}, ${cardColor.g}, ${cardColor.b}, ${cardColor.a})`,
+        backgroundColor: colord(cardColor).toRgbString(),
       }}
     >
       <CardHeader>

@@ -6,6 +6,7 @@ import { FaPause, FaPlay } from 'react-icons/fa';
 import { useSettings, useTimer } from '@/store';
 import ResetTimer from './ResetTimer';
 import { Button } from './ui';
+import { colord } from 'colord';
 
 const Timer = () => {
   const { timeInMilliseconds, isActive, isPaused, pause, resume, start } =
@@ -40,7 +41,7 @@ const Timer = () => {
         className="text-3xl ml-5"
         style={{
           color: isPaused
-            ? `rgb(${timerPauseColor.r}, ${timerPauseColor.g}, ${timerPauseColor.b})`
+            ? colord(timerPauseColor).toHex()
             : 'inherit',
         }}
       >

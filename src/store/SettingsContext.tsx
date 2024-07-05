@@ -2,6 +2,7 @@ import { createContext, useState, useEffect } from 'react';
 import { CompletedButtonVariant, TimerInterval } from '@/types';
 import { RgbColor, RgbaColor } from 'react-colorful';
 import { getItemFromLocalStorageOrDefault } from './utils';
+import { colord } from 'colord';
 
 const defaultTimerInterval: TimerInterval = 1000;
 
@@ -120,11 +121,11 @@ export const SettingsProvider = ({ children }: Props): JSX.Element => {
   ]);
 
   useEffect(() => {
-    document.body.style.backgroundColor = `rgba(${backgroundColor.r}, ${backgroundColor.g}, ${backgroundColor.b}, ${backgroundColor.a})`;
+    document.body.style.backgroundColor = colord(backgroundColor).toRgbString();
     document.body.style.backgroundImage = `url(${backgroundPicture})`;
     document.body.style.setProperty(
       '--card-foreground',
-      `rgb(${fontColor.r}, ${fontColor.g}, ${fontColor.b})`
+      colord(cardColor).toRgbString()
     );
   }, [backgroundColor, backgroundPicture, fontColor]);
 
