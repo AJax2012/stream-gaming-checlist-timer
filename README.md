@@ -38,6 +38,13 @@ Default layout:
   <img src="./assets/Stream-Gaming-Checklist-Timer-Default.png" alt="Screenshot of Default Layout of Stream Gaming Checklist Timer" width="400px">
 </div>
 
+Example by [@JennyKikiLv24](https://www.twitch.tv/jennykikilv24)
+
+<p align="center">
+  <img src="./assets/Stream-Gaming-Checklist-Timer-Flower-Background.png" alt="Screenshot of Stream Gaming Checklist Timer created by JennykikiLv24" width="400px">
+</div>
+
+
 ## Upcoming additions
 
 I'd like to continue working on this. I will eventually upload some examples to this file, but I'm not great with color matching. If you have an example you're proud of though, I'd be happy to take a look at it! For now, create an "Issue" and share your images. I'm not especially picky about the issue format/template.
