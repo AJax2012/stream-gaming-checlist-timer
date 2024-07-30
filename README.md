@@ -4,7 +4,7 @@ A highly customizable streamer's tool for keeping track of when objectives are c
 
 ## Reason
 
-I came up with this idea when my wife was in a Animal Crossing tournament on [Twitch](https://twitch.tv). She needed to accomplish a set of tasks, such as finding Leo villagers or finding specific villagers, and results would be decided on when certain objectives were completed. When I saw the requirements, it reminded me of watching speed-runners trying to complete certain objectives by a certain time.
+I came up with this idea when my wife was in a Animal Crossing tournament on [Twitch](https://twitch.tv){:target="_blank"}. She needed to accomplish a set of tasks, such as finding Leo villagers or finding specific villagers, and results would be decided on when certain objectives were completed. When I saw the requirements, it reminded me of watching speed-runners trying to complete certain objectives by a certain time.
 
 ## Customization
 
@@ -38,7 +38,7 @@ Default layout:
   <img src="./assets/Stream-Gaming-Checklist-Timer-Default.png" alt="Screenshot of Default Layout of Stream Gaming Checklist Timer" width="400px">
 </div>
 
-Example by [@JennyKikiLv24](https://www.twitch.tv/jennykikilv24)
+Example by [@JennyKikiLv24](https://www.twitch.tv/jennykikilv24){:target="_blank"}
 
 <p align="center">
   <img src="./assets/Stream-Gaming-Checklist-Timer-Flower-Background.png" alt="Screenshot of Stream Gaming Checklist Timer created by JennykikiLv24" width="400px">
