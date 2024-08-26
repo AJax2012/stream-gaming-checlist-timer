@@ -1,6 +1,14 @@
-# Stream Gaming Checklist Timer
+# Stream Gaming Checklist Timer <!-- omit from toc -->
 
 A highly customizable streamer's tool for keeping track of when objectives are completed.
+
+Table of Contents:
+
+- [Reason](#reason)
+- [Customization](#customization)
+- [Sharing and Templates](#sharing-and-templates)
+- [Examples](#examples)
+- [Upcoming additions](#upcoming-additions)
 
 ## Reason
 
