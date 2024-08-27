@@ -9,7 +9,11 @@ const Home = (): JSX.Element => {
   const { fontColor } = useSettings();
 
   return (
-    <section id="main-content" className="block" style={{ color: colord(fontColor).toHex() }}>
+    <section
+      id="main-content"
+      className="block"
+      style={{ color: colord(fontColor).toHex() }}
+    >
       <Header />
       <AchievementList />
       <EventList />

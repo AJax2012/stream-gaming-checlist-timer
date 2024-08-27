@@ -40,9 +40,7 @@ const Timer = () => {
       <div
         className="text-3xl ml-5"
         style={{
-          color: isPaused
-            ? colord(timerPauseColor).toHex()
-            : 'inherit',
+          color: isPaused ? colord(timerPauseColor).toHex() : 'inherit',
         }}
       >
         {Duration.fromMillis(timeInMilliseconds).toFormat(format)}
