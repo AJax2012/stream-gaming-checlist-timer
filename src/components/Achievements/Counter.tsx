@@ -34,7 +34,7 @@ const Counter = ({
 
   const count = useMemo(() => {
     return events.filter((event) => event.achievementId === id).length;
-  }, [events, label]);
+  }, [events, id]);
 
   const canIncrement = useMemo(() => !max || count < max, [count, max]);
 

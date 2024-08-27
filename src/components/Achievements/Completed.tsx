@@ -35,7 +35,7 @@ const Completed = ({
 
   const isCompleted = useMemo(() => {
     return events.filter((event) => event.achievementId === id).length > 0;
-  }, [events, label]);
+  }, [events, id]);
 
   const buttonVariant = useMemo(() => {
     if (completedButtonVariant === 'outline') {
