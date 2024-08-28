@@ -70,7 +70,7 @@ const Counter = ({
           'border-y-2 px-1 sm:table-cell hidden': isEditMode,
         })}
       >
-        <CounterInput achievement={achievement} />
+        <CounterInput achievement={achievement} isEditMode={isEditMode} />
       </td>
       {isEditMode && (
         <td className="border-y-2 p-4">
