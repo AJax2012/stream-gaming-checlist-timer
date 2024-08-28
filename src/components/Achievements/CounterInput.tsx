@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import cn from 'classnames';
 import { FaMinus, FaPlus } from 'react-icons/fa';
 import { Button, Input } from '@/components/ui';
 import { useEvent, useTimer } from '@/store';
@@ -6,9 +7,10 @@ import { Achievement } from '@/types';
 
 type Props = {
   achievement: Achievement;
+  isEditMode: boolean;
 };
 
-const CounterInput = ({ achievement }: Props) => {
+const CounterInput = ({ achievement, isEditMode }: Props) => {
   const { id, max } = achievement;
   const { addEvent, events, removeEvent } = useEvent();
   const { isActive, isPaused } = useTimer();
@@ -37,7 +39,7 @@ const CounterInput = ({ achievement }: Props) => {
   };
 
   return (
-    <div className="flex items-center justify-center sm:gap-0 gap-1">
+    <div className={cn("items-center justify-center sm:gap-0 gap-1", {"sm:flex hidden": isEditMode, "flex": !isEditMode})}>
       <Button
         onClick={decrement}
         disabled={!canDecrement || !isActive || isPaused}

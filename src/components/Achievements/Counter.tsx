@@ -67,7 +67,7 @@ const Counter = ({
       <td
         className={cn('py-4 text-center', {
           'border-2 rounded-r-lg border-l-0 px-5': !isEditMode,
-          'border-y-2 px-1': isEditMode,
+          'border-y-2 px-1 sm:table-cell hidden': isEditMode,
         })}
       >
         <CounterInput achievement={achievement} />

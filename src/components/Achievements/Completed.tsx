@@ -102,7 +102,7 @@ const Completed = ({
       <td
         className={cn('py-4 text-center', {
           'border-2 rounded-r-lg border-l-0 px-4': !isEditMode,
-          'border-y-2 px-1 ': isEditMode,
+          'border-y-2 px-1 sm:table-cell hidden': isEditMode,
         })}
       >
         <Button
