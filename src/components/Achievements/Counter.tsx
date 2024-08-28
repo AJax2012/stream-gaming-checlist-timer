@@ -1,13 +1,14 @@
-import { ChangeEvent, useMemo } from 'react';
+import { ChangeEvent } from 'react';
 import cn from 'classnames';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { FaTrashAlt } from 'react-icons/fa';
 import { MdDragIndicator } from 'react-icons/md';
 
-import { useAchievement, useEvent, useTimer } from '@/store';
+import { useAchievement } from '@/store';
 import { Achievement, AchievementType } from '@/types';
-import { Button, Input, Label } from '../ui';
+import CounterInput from './CounterInput.tsx';
+import { Button, Label } from '../ui';
 
 type Props = {
   achievement: Achievement;
@@ -27,33 +28,8 @@ const Counter = ({
   const { id, label, max } = achievement;
 
   const { removeAchievement } = useAchievement();
-  const { addEvent, events, removeEvent } = useEvent();
-  const { isActive, isPaused } = useTimer();
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
-
-  const count = useMemo(() => {
-    return events.filter((event) => event.achievementId === id).length;
-  }, [events, id]);
-
-  const canIncrement = useMemo(() => !max || count < max, [count, max]);
-
-  const canDecrement = useMemo(() => count > 0, [count]);
-
-  const increment = () => {
-    if (canIncrement) {
-      addEvent(achievement);
-    }
-  };
-
-  const decrement = () => {
-    if (count > 0) {
-      const eventToDelete = events
-        .filter((event) => event.achievementId === id)
-        .pop();
-      removeEvent(eventToDelete?.id as string);
-    }
-  };
 
   const handleRemoveAchievement = () => {
     removeAchievement(id);
@@ -89,33 +65,12 @@ const Counter = ({
         {max && <p className="text-sm text-muted-foreground">Needed: {max}</p>}
       </td>
       <td
-        className={cn('py-4 px-1 text-center', {
-          'border-2 rounded-r-lg border-l-0 pr-5': !isEditMode,
-          'border-y-2': isEditMode,
+        className={cn('py-4 text-center', {
+          'border-2 rounded-r-lg border-l-0 px-5': !isEditMode,
+          'border-y-2 px-1': isEditMode,
         })}
       >
-        <span className="flex justify-center flex-nowrap">
-          <Button
-            onClick={decrement}
-            disabled={!canDecrement || !isActive || isPaused}
-            className="rounded-none rounded-s-lg"
-          >
-            -
-          </Button>
-          <Input
-            type="number"
-            className="rounded-none text-right w-fit max-w-16"
-            value={count}
-            disabled
-          />
-          <Button
-            onClick={increment}
-            disabled={!canIncrement || !isActive || isPaused}
-            className="rounded-none rounded-e-lg"
-          >
-            +
-          </Button>
-        </span>
+        <CounterInput achievement={achievement} />
       </td>
       {isEditMode && (
         <td className="border-y-2 p-4">

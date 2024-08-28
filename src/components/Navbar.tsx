@@ -12,7 +12,7 @@ const Navbar = () => {
   return (
     <nav className="h-12 pb-0.5 mb-6 mx-0 w-full border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
       <div className="flex h-full items-center justify-end">
-        <NavigationMenu className="hidden md:flex">
+        <NavigationMenu className="flex">
           <NavigationMenuList className="flex gap-3 mr-6">
             <NavigationMenuItem>
               <NavigationMenuLink asChild>

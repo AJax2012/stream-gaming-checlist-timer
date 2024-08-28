@@ -100,9 +100,9 @@ const Completed = ({
         <Label className="mr-8 font-semibold text-xl">{label}</Label>
       </td>
       <td
-        className={cn('py-4 px-1 text-center', {
-          'border-2 rounded-r-lg border-l-0 pl-4': !isEditMode,
-          'border-y-2': isEditMode,
+        className={cn('py-4 text-center', {
+          'border-2 rounded-r-lg border-l-0 px-4': !isEditMode,
+          'border-y-2 px-1 ': isEditMode,
         })}
       >
         <Button

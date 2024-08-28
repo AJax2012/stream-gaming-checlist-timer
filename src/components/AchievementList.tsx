@@ -64,7 +64,7 @@ const AchievementList = () => {
         <CardTitle>Achievements</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="container mx-auto">
+        <div className="sm:container mx-auto">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
