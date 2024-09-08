@@ -55,11 +55,8 @@ Example by [@Renspeon](https://www.twitch.tv/renspeon)
 Examples by [@JennyKikiLv24](https://www.twitch.tv/jennykikilv24)
 
 <p align="center">
-  <img src="./assets/Stream-Gaming-Checklist-Timer-Flower-Background.png" alt="Screenshot of Stream Gaming Checklist Timer created by JennykikiLv24" width="400px">
-</div>
-
-<p align="center">
-  <img src="./assets/Stream-Gaming-Checklist-Timer-JennyKikiLv24-Stream.png" alt="Screenshot of Stream Gaming Checklist Timer in Twitch stream created by JennykikiLv24" width="400px">
+  <img src="./assets/Stream-Gaming-Checklist-Timer-Flower-Background.png" alt="Screenshot of Stream Gaming Checklist Timer created by JennykikiLv24" width="400px"  style="vertical-align: middle;" />
+  <img src="./assets/Stream-Gaming-Checklist-Timer-JennyKikiLv24-Stream.png" alt="Screenshot of Stream Gaming Checklist Timer in Twitch stream created by JennykikiLv24" width="400px" style="vertical-align: middle;" />
 </div>
 
 
