@@ -46,6 +46,12 @@ Default layout:
   <img src="./assets/Stream-Gaming-Checklist-Timer-Default.png" alt="Screenshot of Default Layout of Stream Gaming Checklist Timer" width="400px">
 </div>
 
+Example by [@Renspeon](https://www.twitch.tv/renspeon)
+
+<p align="center">
+  <img src="./assets/Stream-Gaming-Checklist-Timer-Botw-Mastersword.png" alt="Screenshot of Stream Gaming Checklist Timer with BOTW Mastersword background by Renspeon" width="400px">
+</div>
+
 Example by [@JennyKikiLv24](https://www.twitch.tv/jennykikilv24)
 
 <p align="center">
